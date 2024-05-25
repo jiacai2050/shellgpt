@@ -1,5 +1,6 @@
 certifi==2024.2.2
 charset-normalizer==3.3.2
+duckdb==0.10.3
 idna==3.7
 linkify-it-py==2.0.3
 markdown-it-py==3.0.0
