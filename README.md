@@ -1,11 +1,16 @@
 # ShellGPT
 
+[![](https://img.shields.io/pypi/v/shgpt)](https://pypi.org/project/shgpt/)
+
 Generate shell command you want with power of LLM, without leaving your terminal!
 
 # Install
 ```
 pip install shgpt
 ```
+
+This will install two commands: `sg` and `shgpt`.
+
 # Usage
 
 ShellGPT has three modes to use:

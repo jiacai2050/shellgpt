@@ -4,4 +4,7 @@ run:
 build:
 	hatch build
 
-.PHONY: run build
+clean:
+	rm -rf build dist shgpt.egg-info
+
+.PHONY: run build clean

@@ -7,26 +7,16 @@ jobs:
   pypi-publish:
     name: Upload release to PyPI
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/shgpt
-    permissions:
-      id-token: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
-    - name: Install pypa/build
+        python-version: '3.x'
+    - name: Install pypa
       run: >-
-        python3 -m
-        pip install
-        hatchling
-        --user
-    - name: Build a binary wheel and a source tarball
-      run: python3 -m hatchling build
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        packages-dir: dist
+        pip install hatch
+    - name: Pulish
+      run: |
+        hatch build
+        hatch publish -u '__token__' -a '${{ secrets.HATCH_INDEX_AUTH }}'
