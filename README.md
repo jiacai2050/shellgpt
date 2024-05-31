@@ -1,29 +1,25 @@
 # ShellGPT
 
-Make Shell easy to use with power of LLM!
+Generate shell command you want with power of LLM, without leaving your terminal!
 
-# How to run
-```bash
-# Install deps
-make init
+# Usage
 
-# Then
-make run
+ShellGPT has three modes to use:
+- `sg {your question}`
+- `sg`, Enter TUI mode
+- `sg -l`, Enter an interactive REPL
 
-```
+See [conf.py](shellgpt/utils/conf.py) for configs.
 
-This will start a simple REPL to explore:
-```
-$ make run
+## TUI
+There are some key bindings to use in TUI:
+- `ctrl+j`, Infer answer
+- `ctrl+r`, Run command
+- `ctrl+y`, Yank command
 
-__      __   _                    _         ___ _        _ _  ___ ___ _____
-\ \    / /__| |__ ___ _ __  ___  | |_ ___  / __| |_  ___| | |/ __| _ \_   _|
- \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
-  \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
+# Requirements
+- [Ollama](https://ollama.com/), you need to download models before try shellgpt.
 
-> hello
-Hello! It's nice to meet you. Is there something I can help you with, or would you like to chat?
-```
+# License
 
-# Reference
-- https://docs.python-guide.org/writing/structure/
+[GPL-3.0](https://opensource.org/license/GPL-3.0)

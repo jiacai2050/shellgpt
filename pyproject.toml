@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "shellgpt"
+dynamic = ["version"]
+authors = [{name = "Jiacai Liu", email="dev@liujiacai.net"}]
+description = "Text to shell"
+keywords = ["llm", "shell", "gpt"]
+license = "GPL-3.0"
+dependencies = [
+  "requests",
+  "smartinput",
+  "pyperclip",
+  "textual",
+]
+
+[project.urls]
+Repository = "https://github.com/jiacai2050/shellgpt"
+Issues = "https://github.com/jiacai2050/shellgpt/issues"
+
+[project.scripts]
+sg = "shellgpt.main:main"
+
+[tool.hatch.version]
+path = "shellgpt/version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "shellgpt",
+  "pyproject.toml",
+  "README.md",
+  "Makefile",
+]
+
+[tool.hatch.build.targets.wheel]
+include = [
+  "shellgpt",
+]
+
+
+classifiers = [
+    "Operating System :: OS Independent",
+    "Topic :: Software Development",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]

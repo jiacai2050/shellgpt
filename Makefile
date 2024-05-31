@@ -7,4 +7,7 @@ init:
 freeze:
 	pip freeze > requirements.txt
 
-.PHONY: init freeze test
+build:
+	hatch build
+
+.PHONY: init freeze test build

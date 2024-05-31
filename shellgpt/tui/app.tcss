@@ -1,0 +1,17 @@
+#prompt_input {
+    height: 10;
+}
+
+#answer_output {
+    height: 5;
+}
+
+
+ButtonDispatch {
+    align: center middle;
+    layout: horizontal;
+}
+
+Button {
+    margin: 1;
+}
