@@ -18,13 +18,15 @@ ShellGPT has three modes to use:
 - `sg`, Enter TUI mode
 - `sg -l`, Enter an interactive REPL
 
-See [conf.py](shellgpt/utils/conf.py) for configs.
+See [conf.py](shgpt/utils/conf.py) for configs.
 
 ## TUI
 There are some key bindings to use in TUI:
 - `ctrl+j`, Infer answer
 - `ctrl+r`, Run command
 - `ctrl+y`, Yank command
+
+![TUI screenshot](./assets/shellgpt-tui.jpg)
 
 # Requirements
 - [Ollama](https://ollama.com/), you need to download models before try shellgpt.
