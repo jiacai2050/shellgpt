@@ -100,7 +100,7 @@ class ShellGPTApp(App):
 
         debug_print(f"infer {prompt}")
         # llm infer
-        resp = self.llm.generate(prompt, True, True)
+        resp = self.llm.generate(prompt, True)
         buf = ''
         for item in resp:
             buf += item

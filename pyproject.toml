@@ -22,8 +22,8 @@ Repository = "https://github.com/jiacai2050/shellgpt"
 Issues = "https://github.com/jiacai2050/shellgpt/issues"
 
 [project.scripts]
-sg = "shgpt.main:main"
-shgpt = "shgpt.main:main"
+sg = "shgpt:main"
+shgpt = "shgpt:main"
 
 [tool.hatch.version]
 path = "shgpt/version.py"

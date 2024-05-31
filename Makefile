@@ -1,5 +1,8 @@
-run:
-	@ python -m shgpt.main
+tui:
+	@ python -m shgpt
+
+repl:
+	@ python -m shgpt -r
 
 build:
 	hatch build
@@ -7,4 +10,4 @@ build:
 clean:
 	rm -rf build dist shgpt.egg-info
 
-.PHONY: run build clean
+.PHONY: tui repl build clean

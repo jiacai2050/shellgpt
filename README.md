@@ -14,9 +14,9 @@ This will install two commands: `sg` and `shgpt`.
 # Usage
 
 ShellGPT has three modes to use:
-- `sg {your question}`
-- `sg`, Enter TUI mode
-- `sg -l`, Enter an interactive REPL
+- `sg {your question}`, direct mode
+- `sg`, Enter TUI mode, tailored for infer shell command
+- `sg -r`, Enter an interactive REPL
 
 See [conf.py](shgpt/utils/conf.py) for configs.
 
