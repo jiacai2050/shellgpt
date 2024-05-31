@@ -14,14 +14,28 @@ This will install two commands: `sg` and `shgpt`.
 # Usage
 
 ShellGPT has three modes to use:
-- `sg {your question}`, direct mode
+- Direct mode, `sg [question]` or `echo question | sg`.
 - `sg`, Enter TUI mode, tailored for infer shell command
-- `sg -r`, Enter an interactive REPL
+- `sg -l`, Enter an interactive REPL.
 
 See [conf.py](shgpt/utils/conf.py) for configs.
 
-## TUI
-There are some key bindings to use in TUI:
+## Role
+
+There are some built-in roles in shellgpt:
+- `default`, used for ask general programming questions
+- `shell`, used for infer shell command
+- `cm`, used for generate git commit message
+
+```bash
+git diff | sg -r cm
+```
+
+Users can provide their own role with `-r` option.
+
+## TUI generate git commit message
+
+Users can provide their own role with `-r`There are some key bindings to use in TUI: option
 - `ctrl+j`, Infer answer
 - `ctrl+r`, Run command
 - `ctrl+y`, Yank command
