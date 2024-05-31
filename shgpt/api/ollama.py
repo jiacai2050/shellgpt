@@ -5,8 +5,14 @@ from ..utils.conf import *
 
 HIST_SEP = '=========='
 CONTENT = {
-    'default': f'''You are programming and system administration assistant.
-    You are managing {OS_NAME} operating system with {SHELL} shell.
+    'default': None,
+    'code': '''
+Provide only code as output without any description.
+Provide only code in plain text format without Markdown formatting.
+Do not include symbols such as ``` or ```python.
+If there is a lack of details, provide most logical solution.
+You are not allowed to ask for more details.
+For example if the prompt is "Hello world Python", you should return "print('Hello world')".
     ''',
     'shell': f'''
     You are a shell script assistant on {OS_NAME} running {SHELL},

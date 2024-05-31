@@ -1,11 +1,22 @@
 import argparse, sys
 from os import environ, makedirs
-from smartinput import sinput
+from smartinput import sinput, Shell, Fore
 from .api.ollama import Ollama
 from .version import __version__
 from .utils.conf import *
 from .utils.common import *
 from .tui.app import ShellGPTApp
+from functools import partial
+
+
+def repl_handler(llm, prompt, shell):
+    if prompt != "":
+        try:
+            for r in llm.generate(prompt):
+                print(r, end='')
+            print()
+        except Exception as e:
+            shell.out(f"Error when infer: ${e}")
 
 
 class ShellGPT(object):
@@ -24,21 +35,14 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
 ''')
-        while True:
-            prompt = sinput("> ")
-            if prompt != "":
-                try:
-                    self.infer(prompt, False, True)
-                except Exception as e:
-                    print(f"Error when infer: ${e}")
+        shell = Shell(callback=partial(repl_handler, self.llm), intitle="shellgpt> ", outtitle="", alertcolor=Fore.RED, exiton="exit")
+        shell.start()
+        return
 
     def infer(self, prompt):
         for r in self.llm.generate(prompt):
             print(r, end='')
         print()
-
-        # r = sinput("Execute, Yank, Continue", hints=['e', 'y', 'c'])
-        # print(r)
 
 
 def main():
@@ -66,6 +70,8 @@ def main():
     role = args.role
     if args.shell:
         role = 'shell'
+    elif args.repl:
+        pass
     elif len(prompt) == 0:
         # tui default to shell role
         role = 'shell'

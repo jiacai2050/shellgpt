@@ -23,7 +23,8 @@ See [conf.py](shgpt/utils/conf.py) for configs.
 ## Role
 
 There are some built-in roles in shellgpt:
-- `default`, used for ask general programming questions
+- `default`, used for ask general questions
+- `code`, used for ask programming questions
 - `shell`, used for infer shell command
 - `cm`, used for generate git commit message
 

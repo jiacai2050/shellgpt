@@ -2,7 +2,7 @@ tui:
 	@ python -m shgpt
 
 repl:
-	@ python -m shgpt -r
+	@ python -m shgpt -l
 
 build:
 	hatch build
