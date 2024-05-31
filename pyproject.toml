@@ -3,10 +3,10 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "shellgpt"
+name = "shgpt"
 dynamic = ["version"]
 authors = [{name = "Jiacai Liu", email="dev@liujiacai.net"}]
-description = "Text to shell"
+description = "Generate shell command you want with power of LLM, without leaving your terminal."
 keywords = ["llm", "shell", "gpt"]
 license = "GPL-3.0"
 dependencies = [

@@ -2,6 +2,10 @@
 
 Generate shell command you want with power of LLM, without leaving your terminal!
 
+# Install
+```
+pip install shgpt
+```
 # Usage
 
 ShellGPT has three modes to use:
