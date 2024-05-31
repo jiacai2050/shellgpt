@@ -4,7 +4,7 @@ tui:
 repl:
 	@ python -m shgpt -l
 
-build:
+build: clean
 	hatch build
 
 clean:
