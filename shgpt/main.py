@@ -1,11 +1,11 @@
 import argparse
 from os import environ, makedirs
 from smartinput import sinput
-from shellgpt.api.ollama import Ollama
-from shellgpt.version import __version__
-from shellgpt.utils.conf import *
-from shellgpt.utils.common import set_verbose
-from shellgpt.tui.app import ShellGPTApp
+from .api.ollama import Ollama
+from .version import __version__
+from .utils.conf import *
+from .utils.common import set_verbose
+from .tui.app import ShellGPTApp
 
 
 class ShellGPT(object):

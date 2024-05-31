@@ -1,7 +1,7 @@
-from shellgpt.utils.http import TimeoutSession
 import json, os
-from shellgpt.utils.common import *
-from shellgpt.utils.conf import *
+from ..utils.http import TimeoutSession
+from ..utils.common import *
+from ..utils.conf import *
 
 HIST_SEP = '=========='
 CONTENT = {

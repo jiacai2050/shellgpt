@@ -1,10 +1,10 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Static, TextArea, Button
-from shellgpt.utils.common import *
-import pyperclip
 from typing import Optional
-from shellgpt.utils.common import debug_print
+import pyperclip
 import subprocess
+from ..utils.common import *
+from ..utils.common import debug_print
 
 class PromptInput(Static):
     def compose(self) -> ComposeResult:

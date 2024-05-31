@@ -1,13 +1,7 @@
 run:
-	@ python -m shellgpt.main
-
-init:
-	pip install -r requirements.txt
-
-freeze:
-	pip freeze > requirements.txt
+	@ python -m shgpt.main
 
 build:
 	hatch build
 
-.PHONY: init freeze test build
+.PHONY: run build
