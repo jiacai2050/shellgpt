@@ -6,13 +6,12 @@ build-backend = "hatchling.build"
 name = "shgpt"
 dynamic = ["version"]
 authors = [{name = "Jiacai Liu", email="dev@liujiacai.net"}]
-description = "Generate shell command you want with power of LLM, without leaving your terminal."
+description = "Chat with LLM for anything you like, be it shell generator, story teller, linux-terminal, etc. All without leaving your terminal!"
 readme = "README.md"
 keywords = ["llm", "shell", "gpt"]
 license = "GPL-3.0"
 dependencies = [
   "requests",
-  "smartinput",
   "pyperclip",
   "textual",
 ]

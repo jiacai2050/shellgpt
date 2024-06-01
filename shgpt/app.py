@@ -8,6 +8,7 @@ from .tui.app import ShellGPTApp
 from functools import partial
 
 def init_app():
+    print(f'Create {CONF_PATH}...')
     makedirs(CONF_PATH, exist_ok=True)
 
 def read_action(cmd):

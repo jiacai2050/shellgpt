@@ -2,14 +2,16 @@
 
 [![](https://img.shields.io/pypi/v/shgpt)](https://pypi.org/project/shgpt/)
 
-Generate shell command you want with power of LLM, without leaving your terminal!
+Chat with LLM for anything you like, be it shell generator, story teller, linux-terminal, etc. All without leaving your terminal!
 
 # Install
 ```
 pip install -U shgpt
 ```
 
-This will install two commands: `sg` and `shgpt`.
+This will install two commands: `sg` and `shgpt`, which are identical.
+
+After install, use `sg --init` to create required directories(mainly `~/.shellgpt`).
 
 # Usage
 
@@ -18,7 +20,7 @@ ShellGPT has three modes to use:
 - TUI mode, `sg`, tailored for infer shell command.
 - REPL mode, `sg -l`, chat with LLM.
 
-See [conf.py](shgpt/utils/conf.py) for configs.
+See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.py) for configs.
 
 ## TUI
 
@@ -27,7 +29,7 @@ There are some key bindings to use in TUI: option
 - `ctrl+r`, Run command
 - `ctrl+y`, Yank command
 
-![TUI screenshot](./assets/shellgpt-tui.jpg)
+![TUI screenshot](https://github.com/jiacai2050/shellgpt/raw/main/assets/shellgpt-tui.jpg)
 
 ## Role
 
@@ -41,7 +43,7 @@ Users can define their own roles in `~/.shellgpt/roles.json`, it a JSON map with
 - key being role name and
 - value being role content
 
-Or you can just copy [roles.json](./roles.json) to play with, it's generated from [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts/).
+Or you can just copy [roles.json](https://github.com/jiacai2050/shellgpt/blob/main/roles.json) to play with, it's generated from [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts/blob/main/prompts.csv).
 
 ```bash
 $ shgpt -r linux-terminal pwd
