@@ -1,11 +1,7 @@
 import json
-import os
 from ..utils.http import TimeoutSession
 from ..utils.common import *
 from ..utils.conf import *
-from .history import DummyHistory, FileHistory
-
-HIST_SEP = "=========="
 
 
 # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
@@ -13,27 +9,31 @@ class Ollama(object):
     def __init__(self, base_url, model, role, timeout):
         self.base_url = base_url
         self.http_session = TimeoutSession(timeout=timeout)
-        if ENABLE_HISTORY:
-            self.history_file = FileHistory(os.path.join(CONF_PATH, "history"))
-        else:
-            self.history_file = DummyHistory()
         self.model = model
         self.role = role
+        self.system_message = (
+            None
+            if role == "default"
+            else {"role": "system", "content": ROLE_CONTENT.get(self.role)}
+        )
+        self.messages = []
 
-    def generate(self, prompt, stream=True):
+    def chat(self, prompt, stream=True):
         url = self.base_url + "/api/chat"
         debug_print(
             f"generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}"
         )
-        system_content = ROLE_CONTENT.get(self.role, self.role)
+        self.messages.append({"role": "user", "content": prompt})
+        if len(self.messages) > 10:
+            self.messages = self.messages[-10:]
         payload = {
-            "messages": [
-                {"role": "system", "content": system_content, "name": "ShellGPT"},
-                {"role": "user", "content": prompt, "name": "user"},
-            ],
+            "messages": [] if self.system_message is None else [self.system_message],
             "model": self.model,
             "stream": stream,
         }
+        for m in self.messages:
+            payload["messages"].append(m)
+
         debug_print(f"Infer message: {payload}")
         r = self.http_session.post(url, json=payload, stream=stream)
         if r.status_code != 200:
@@ -46,10 +46,3 @@ class Ollama(object):
                 content = resp["message"]["content"]
                 answer += content
                 yield content
-            else:
-                self.history_file.write(rf"""{now_ms()},{resp['eval_duration']},{resp['eval_count']}
-{prompt}
-{HIST_SEP}
-{answer}
-{HIST_SEP}
-""")

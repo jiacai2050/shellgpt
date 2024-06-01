@@ -1,6 +1,6 @@
 import argparse
 import sys
-from os import makedirs
+from os import makedirs, path
 from .api.ollama import Ollama
 from .version import __version__
 from .utils.conf import *
@@ -11,6 +11,21 @@ from .tui.app import ShellGPTApp
 def init_app():
     print(f"Create {CONF_PATH}...")
     makedirs(CONF_PATH, exist_ok=True)
+
+
+def setup_readline():
+    import readline
+    import atexit
+
+    history = path.join(CONF_PATH, "history")
+    try:
+        readline.read_history_file(history)
+        readline.set_history_length(MAX_HISTORY)
+    except FileNotFoundError:
+        debug_print(f"History file not found: {history}")
+        pass
+
+    atexit.register(readline.write_history_file, history)
 
 
 def read_action(cmd):
@@ -25,7 +40,6 @@ def read_action(cmd):
 
 class ShellGPT(object):
     def __init__(self, url, model, role, timeout):
-        self.role = role
         self.is_shell = role == "shell"
         self.llm = Ollama(url, model, role, timeout)
 
@@ -54,7 +68,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 
         buf = ""
         try:
-            for r in self.llm.generate(prompt):
+            for r in self.llm.chat(prompt):
                 buf += r
                 if self.is_shell is False:
                     print(r, end="")
@@ -78,6 +92,7 @@ def main():
         prog="shgpt",
         description="Chat with LLM in your terminal, be it shell generator, story teller, linux-terminal, etc.",
     )
+
     parser.add_argument(
         "-V", "--version", action="version", version="%(prog)s " + __version__
     )
@@ -151,4 +166,5 @@ def main():
     elif app_mode == AppMode.TUI:
         sg.tui(prompt)
     else:
+        setup_readline()
         sg.repl(prompt)

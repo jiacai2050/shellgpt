@@ -1,4 +1,4 @@
-from textual.app import App, ComposeResult
+from textual.app import App, ComposeResult, Binding
 from textual.widgets import Header, Footer, Static, TextArea, Button
 from typing import Optional
 from ..utils.common import *
@@ -24,9 +24,9 @@ class CommandOutput(Static):
 
 
 class ButtonDispatch(Static):
-    def __init__(self, copy_handler, run_handler):
+    def __init__(self, yank_handler, run_handler):
         super().__init__()
-        self.copy_handler = copy_handler
+        self.yank_handler = yank_handler
         self.run_handler = run_handler
 
     def compose(self) -> ComposeResult:
@@ -36,7 +36,7 @@ class ButtonDispatch(Static):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Event handler called when a button is pressed."""
         if event.button.id == "copy":
-            self.copy_handler()
+            self.yank_handler()
         elif event.button.id == "run":
             self.run_handler()
 
@@ -44,10 +44,10 @@ class ButtonDispatch(Static):
 class ShellGPTApp(App):
     CSS_PATH = "app.tcss"
     BINDINGS = [
-        ("ctrl+j", "infer", "Infer answer"),
-        ("ctrl+d", "toggle_dark", "Toggle dark mode"),
-        ("ctrl+y", "Yank", "Yank code block"),
-        ("ctrl+r", "run", "Run code block"),
+        Binding("ctrl+j", "infer", "Infer answer"),
+        Binding("ctrl+d", "toggle_dark", "Toggle dark mode"),
+        Binding("ctrl+y", "yank", "Yank code block", priority=True),
+        Binding("ctrl+r", "run", "Run code block"),
     ]
 
     def __init__(self, llm, initial_prompt):
@@ -62,7 +62,7 @@ class ShellGPTApp(App):
         yield PromptInput(self.initial_prompt)
         yield AnswerOutput()
         yield ButtonDispatch(
-            lambda: self.action_copy(),
+            lambda: self.action_yank(),
             lambda: self.action_run(),
         )
         yield CommandOutput()
@@ -79,7 +79,7 @@ class ShellGPTApp(App):
 
         self.has_inflight_req = True
         try:
-            self.action_infer_inner()
+            self.infer_inner()
         except Exception as e:
             answer_output = self.query_one("#answer_output")
             answer_output.load_text(f"Error when infer: {e}")
@@ -96,14 +96,14 @@ class ShellGPTApp(App):
         text = out.text.strip()
         return None if text == "" else text
 
-    def action_infer_inner(self) -> None:
+    def infer_inner(self) -> None:
         prompt = self.get_prompt_input()
         if prompt is None:
             return
 
         debug_print(f"infer {prompt}")
         # llm infer
-        resp = self.llm.generate(prompt, True)
+        resp = self.llm.chat(prompt, True)
         buf = ""
         for item in resp:
             buf += item
@@ -112,7 +112,7 @@ class ShellGPTApp(App):
         answer_output = self.query_one("#answer_output")
         answer_output.load_text(buf)
 
-    def action_copy(self) -> None:
+    def action_yank(self) -> None:
         text = self.get_answer_output()
         if text is None:
             return

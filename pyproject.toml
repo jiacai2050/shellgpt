@@ -10,6 +10,7 @@ description = "Chat with LLM in your terminal, be it shell generator, story tell
 readme = "README.md"
 keywords = ["llm", "shell", "gpt"]
 license = "GPL-3.0"
+requires-python = ">=3.0.0"
 dependencies = [
   "requests",
   "pyperclip",
