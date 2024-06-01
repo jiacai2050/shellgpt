@@ -1,31 +1,17 @@
 import argparse
 import sys
-from os import makedirs, path
+from os import makedirs
 from .api.ollama import Ollama
 from .version import __version__
 from .utils.conf import *
 from .utils.common import *
 from .tui.app import ShellGPTApp
+from .history import History
 
 
 def init_app():
     print(f"Create {CONF_PATH}...")
     makedirs(CONF_PATH, exist_ok=True)
-
-
-def setup_readline():
-    import readline
-    import atexit
-
-    history = path.join(CONF_PATH, "history")
-    try:
-        readline.read_history_file(history)
-        readline.set_history_length(MAX_HISTORY)
-    except FileNotFoundError:
-        debug_print(f"History file not found: {history}")
-        pass
-
-    atexit.register(readline.write_history_file, history)
 
 
 def read_action(cmd):
@@ -43,8 +29,8 @@ class ShellGPT(object):
         self.is_shell = role == "shell"
         self.llm = Ollama(url, model, role, timeout)
 
-    def tui(self, initial_prompt):
-        app = ShellGPTApp(self.llm, initial_prompt)
+    def tui(self, history, initial_prompt):
+        app = ShellGPTApp(self.llm, history, initial_prompt)
         app.run()
 
     def repl(self, initial_prompt):
@@ -161,10 +147,13 @@ def main():
         sys.exit(1)
 
     sg = ShellGPT(args.ollama_url, args.ollama_model, role, args.timeout)
+    history = History()
+    if prompt != "":
+        history.add(prompt)
+
     if app_mode == AppMode.Direct:
         sg.infer(prompt)
     elif app_mode == AppMode.TUI:
-        sg.tui(prompt)
+        sg.tui(history, prompt)
     else:
-        setup_readline()
         sg.repl(prompt)

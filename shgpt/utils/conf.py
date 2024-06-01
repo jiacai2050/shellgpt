@@ -8,6 +8,7 @@ OLLAMA_URL = environ.get("SHELLGPT_OLLAMA_URL", "http://127.0.0.1:11434")
 OLLAMA_MODEL = environ.get("SHELLGPT_OLLAMA_MODEL", "llama3")
 INFER_TIMEOUT = int(environ.get("SHELLGPT_INFER_TIMEOUT", "15"))  # seconds
 MAX_HISTORY = int(environ.get("SHELLGPT_MAX_HISTORY", "1000"))
+MAX_CHAT_MESSAGES = int(environ.get("SHELLGPT_MAX_CHAT_MESSAGES", "10"))
 
 # Built-in roles for different workloads.
 ROLE_CONTENT = {

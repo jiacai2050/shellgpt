@@ -11,6 +11,7 @@ class Ollama(object):
         self.http_session = TimeoutSession(timeout=timeout)
         self.model = model
         self.role = role
+        self.max_messages = MAX_CHAT_MESSAGES
         self.system_message = (
             None
             if role == "default"
@@ -24,8 +25,8 @@ class Ollama(object):
             f"generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}"
         )
         self.messages.append({"role": "user", "content": prompt})
-        if len(self.messages) > 10:
-            self.messages = self.messages[-10:]
+        if len(self.messages) > self.max_messages:
+            self.messages = self.messages[-self.max_messages :]
         payload = {
             "messages": [] if self.system_message is None else [self.system_message],
             "model": self.model,
@@ -42,7 +43,9 @@ class Ollama(object):
         answer = ""
         for item in r.iter_content(chunk_size=None):
             resp = json.loads(item)
-            if resp["done"] is False:
+            if resp["done"]:
+                self.messages.append({"role": "assistant", "content": answer})
+            else:
                 content = resp["message"]["content"]
                 answer += content
                 yield content

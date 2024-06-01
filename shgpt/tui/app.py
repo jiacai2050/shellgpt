@@ -50,8 +50,9 @@ class ShellGPTApp(App):
         Binding("ctrl+r", "run", "Run code block"),
     ]
 
-    def __init__(self, llm, initial_prompt):
+    def __init__(self, llm, history, initial_prompt):
         self.llm = llm
+        self.history = history
         self.has_inflight_req = False
         self.initial_prompt = initial_prompt
         super().__init__()
@@ -102,6 +103,7 @@ class ShellGPTApp(App):
             return
 
         debug_print(f"infer {prompt}")
+        self.history.add(prompt)
         # llm infer
         resp = self.llm.chat(prompt, True)
         buf = ""
