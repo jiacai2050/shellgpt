@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "shgpt"
 dynamic = ["version"]
 authors = [{name = "Jiacai Liu", email="dev@liujiacai.net"}]
-description = "Chat with LLM for anything you like, be it shell generator, story teller, linux-terminal, etc. All without leaving your terminal!"
+description = "Chat with LLM in your terminal, be it shell generator, story teller, linux-terminal, etc."
 readme = "README.md"
 keywords = ["llm", "shell", "gpt"]
 license = "GPL-3.0"
@@ -14,6 +14,22 @@ dependencies = [
   "requests",
   "pyperclip",
   "textual",
+]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Topic :: Software Development",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 
 [project.urls]
@@ -41,20 +57,6 @@ include = [
   "shgpt",
 ]
 
-
-classifiers = [
-    "Operating System :: OS Independent",
-    "Topic :: Software Development",
-    "License :: OSI Approved :: MIT License",
-    "Intended Audience :: Information Technology",
-    "Intended Audience :: System Administrators",
-    "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-]
+# https://github.com/astral-sh/ruff?tab=readme-ov-file#configuration
+[tool.ruff.lint]
+ignore = ["F405", "F403"]

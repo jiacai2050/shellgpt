@@ -3,6 +3,7 @@ from textual.widgets import Header, Footer, Static, TextArea, Button
 from typing import Optional
 from ..utils.common import *
 
+
 class PromptInput(Static):
     def __init__(self, prompt):
         self.initial_prompt = prompt
@@ -81,7 +82,7 @@ class ShellGPTApp(App):
             self.action_infer_inner()
         except Exception as e:
             answer_output = self.query_one("#answer_output")
-            answer_output.load_text(f'Error when infer: {e}')
+            answer_output.load_text(f"Error when infer: {e}")
         finally:
             self.has_inflight_req = False
 
@@ -103,7 +104,7 @@ class ShellGPTApp(App):
         debug_print(f"infer {prompt}")
         # llm infer
         resp = self.llm.generate(prompt, True)
-        buf = ''
+        buf = ""
         for item in resp:
             buf += item
 
@@ -117,7 +118,6 @@ class ShellGPTApp(App):
             return
 
         copy_text(text)
-
 
     def action_run(self) -> None:
         text = self.get_answer_output()

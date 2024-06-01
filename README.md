@@ -1,8 +1,10 @@
 # ShellGPT
 
 [![](https://img.shields.io/pypi/v/shgpt)](https://pypi.org/project/shgpt/)
+[![](https://github.com/jiacai2050/shellgpt/actions/workflows/ci.yml/badge.svg)](https://github.com/jiacai2050/shellgpt/actions/workflows/ci.yml)
+[![](https://github.com/jiacai2050/shellgpt/actions/workflows/release.yml/badge.svg)](https://github.com/jiacai2050/shellgpt/actions/workflows/release.yml)
 
-Chat with LLM for anything you like, be it shell generator, story teller, linux-terminal, etc. All without leaving your terminal!
+Chat with LLM in your terminal, be it shell generator, story teller, linux-terminal, etc.
 
 # Install
 ```
@@ -53,6 +55,7 @@ $ shgpt -r javascript-console 0.1 + 0.2
 0.3
 
 ```
+
 # Requirements
 - [Ollama](https://ollama.com/), you need to download models before try shellgpt.
 

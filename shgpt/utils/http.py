@@ -1,5 +1,6 @@
 import requests
 
+
 # https://blog.apify.com/python-requests-timeout/
 class TimeoutSession(requests.Session):
     def __init__(self, timeout=10):
