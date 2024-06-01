@@ -1,14 +1,15 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Static, TextArea, Button
 from typing import Optional
-import pyperclip
-import subprocess
 from ..utils.common import *
-from ..utils.common import debug_print
 
 class PromptInput(Static):
+    def __init__(self, prompt):
+        self.initial_prompt = prompt
+        super().__init__()
+
     def compose(self) -> ComposeResult:
-        yield TextArea(id="prompt_input")
+        yield TextArea(self.initial_prompt, id="prompt_input")
 
 
 class AnswerOutput(Static):
@@ -48,15 +49,16 @@ class ShellGPTApp(App):
         ("ctrl+r", "run", "Run code block"),
     ]
 
-    def __init__(self, llm):
+    def __init__(self, llm, initial_prompt):
         self.llm = llm
         self.has_inflight_req = False
+        self.initial_prompt = initial_prompt
         super().__init__()
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()
-        yield PromptInput()
+        yield PromptInput(self.initial_prompt)
         yield AnswerOutput()
         yield ButtonDispatch(
             lambda: self.action_copy(),
@@ -114,8 +116,7 @@ class ShellGPTApp(App):
         if text is None:
             return
 
-        cmd = text
-        pyperclip.copy(cmd)
+        copy_text(text)
 
 
     def action_run(self) -> None:
@@ -124,6 +125,6 @@ class ShellGPTApp(App):
             return
 
         cmd = text
-        output = subprocess.getoutput(cmd)
+        output = execute_cmd(cmd)
         command_output = self.query_one("#command_output")
         command_output.load_text(output)

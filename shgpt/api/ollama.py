@@ -2,42 +2,26 @@ import json, os
 from ..utils.http import TimeoutSession
 from ..utils.common import *
 from ..utils.conf import *
+from .history import DummyHistory, FileHistory
 
 HIST_SEP = '=========='
-CONTENT = {
-    'default': None,
-    'code': '''
-Provide only code as output without any description.
-Provide only code in plain text format without Markdown formatting.
-Do not include symbols such as ``` or ```python.
-If there is a lack of details, provide most logical solution.
-You are not allowed to ask for more details.
-For example if the prompt is "Hello world Python", you should return "print('Hello world')".
-    ''',
-    'shell': f'''
-    You are a shell script assistant on {OS_NAME} running {SHELL},
-    Output the best matching shell commands without any other information, or any quotes.
-    Make sure it's valid shell command.
-    ''',
-    # commit message
-    'cm': f'''
-    Generate git commit message for this changes.
-    ''',
-}
 
 # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
 class Ollama(object):
     def __init__(self, base_url, model, role, timeout):
         self.base_url = base_url
         self.http_session = TimeoutSession(timeout=timeout)
-        self.history_file = open(os.path.join(CONF_PATH, 'history'), 'a+')
+        if ENABLE_HISTORY:
+            self.history_file = FileHistory(os.path.join(CONF_PATH, 'history'))
+        else:
+            self.history_file = DummyHistory()
         self.model = model
         self.role = role
 
     def generate(self, prompt, stream=True):
         url = self.base_url + '/api/chat'
-        debug_print(f"generate: {prompt} to {url} with model {self.model} and stream {stream}")
-        system_content = CONTENT.get(self.role, self.role)
+        debug_print(f"generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}")
+        system_content = ROLE_CONTENT.get(self.role, self.role)
         payload = {
             'messages': [
                 {'role': 'system', 'content': system_content, 'name': 'ShellGPT'},
@@ -53,7 +37,6 @@ class Ollama(object):
 
         answer = ''
         for item in r.iter_content(chunk_size=None):
-            debug_print(f"Infer resp item: {item}\n")
             resp = json.loads(item)
             if resp['done'] is False:
                 content = resp['message']['content']

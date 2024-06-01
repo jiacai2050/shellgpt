@@ -1,15 +1,16 @@
 from enum import Enum
 from typing import Optional
 from datetime import datetime
-import re, platform, os, fileinput, sys
+import re, platform, os, subprocess, sys
+import pyperclip
 
 IS_VERBOSE = False
-TEST_PROMPT = "tell me how to get current disk usage by shell command"
 OS_NAME = platform.system()
+IS_TTY = sys.stdin.isatty()
 
 def get_shell_type():
     if OS_NAME in ("Windows", "nt"):
-        is_powershell = len(getenv("PSModulePath", "").split(pathsep)) >= 3
+        is_powershell = len(os.getenv("PSModulePath", "").split(os.pathsep)) >= 3
         return "powershell.exe" if is_powershell else "cmd.exe"
     return os.path.basename(os.getenv("SHELL", "/bin/sh"))
 
@@ -39,11 +40,25 @@ def now_ms():
 
 
 def read_stdin():
-    if sys.stdin.isatty() is False:
+    if IS_TTY:
+        return None
+    else:
         buf = ''
         for line in sys.stdin:
             buf += line
 
         return buf
-    else:
-        return None
+
+
+def copy_text(text):
+    pyperclip.copy(text)
+
+
+def execute_cmd(cmd):
+    return subprocess.getoutput(cmd)
+
+
+class AppMode(Enum):
+    Direct = 1,
+    TUI = 2,
+    REPL = 3,

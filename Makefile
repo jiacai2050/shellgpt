@@ -10,4 +10,7 @@ build: clean
 clean:
 	rm -rf build dist shgpt.egg-info
 
-.PHONY: tui repl build clean
+roles:
+	@ python download-roles.py
+
+.PHONY: tui repl build clean roles
