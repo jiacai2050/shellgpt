@@ -26,6 +26,7 @@ def read_action(cmd):
 class ShellGPT(object):
     def __init__(self, url, model, role, timeout):
         self.role = role
+        self.is_shell = role == "shell"
         self.llm = Ollama(url, model, role, timeout)
 
     def tui(self, initial_prompt):
@@ -55,19 +56,26 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
         try:
             for r in self.llm.generate(prompt):
                 buf += r
-                print(r, end="")
+                if self.is_shell is False:
+                    print(r, end="")
 
-            print()
-            if self.role == "shell":
+            if self.is_shell:
+                shell = get_executable_script(buf)
+                if shell is not None:
+                    buf = shell
+                print(buf)
+            else:
+                print()
+
+            if self.is_shell:
                 read_action(buf)
         except Exception as e:
             print(f"Error when infer: ${e}")
 
 
 def main():
-    prog = sys.argv[0]
     parser = argparse.ArgumentParser(
-        prog=prog,
+        prog="shgpt",
         description="Chat with LLM in your terminal, be it shell generator, story teller, linux-terminal, etc.",
     )
     parser.add_argument(
