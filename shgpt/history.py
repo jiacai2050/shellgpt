@@ -5,7 +5,7 @@ from os import path
 
 
 class History:
-    def __init__(self, filename=path.join(CONF_PATH, "history")):
+    def __init__(self, filename=path.join(CONF_PATH, 'history')):
         self.filename = filename
         try:
             readline.read_history_file(filename)

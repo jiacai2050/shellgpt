@@ -60,4 +60,7 @@ include = [
 
 # https://github.com/astral-sh/ruff?tab=readme-ov-file#configuration
 [tool.ruff.lint]
-ignore = ["F405", "F403"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "single"

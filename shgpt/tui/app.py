@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult, Binding
 from textual.widgets import Header, Footer, Static, TextArea, Button
 from typing import Optional
-from ..utils.common import *
+from ..utils.common import copy_text, execute_cmd, debug_print
 
 
 class PromptInput(Static):
@@ -10,17 +10,17 @@ class PromptInput(Static):
         super().__init__()
 
     def compose(self) -> ComposeResult:
-        yield TextArea(self.initial_prompt, id="prompt_input")
+        yield TextArea(self.initial_prompt, id='prompt_input')
 
 
 class AnswerOutput(Static):
     def compose(self) -> ComposeResult:
-        yield TextArea(id="answer_output")
+        yield TextArea(id='answer_output')
 
 
 class CommandOutput(Static):
     def compose(self) -> ComposeResult:
-        yield TextArea(id="command_output", read_only=True)
+        yield TextArea(id='command_output', read_only=True)
 
 
 class ButtonDispatch(Static):
@@ -30,24 +30,24 @@ class ButtonDispatch(Static):
         self.run_handler = run_handler
 
     def compose(self) -> ComposeResult:
-        yield Button(label="Copy", variant="primary", id="copy")
-        yield Button(label="Run", variant="error", id="run")
+        yield Button(label='Copy', variant='primary', id='copy')
+        yield Button(label='Run', variant='error', id='run')
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Event handler called when a button is pressed."""
-        if event.button.id == "copy":
+        if event.button.id == 'copy':
             self.yank_handler()
-        elif event.button.id == "run":
+        elif event.button.id == 'run':
             self.run_handler()
 
 
 class ShellGPTApp(App):
-    CSS_PATH = "app.tcss"
+    CSS_PATH = 'app.tcss'
     BINDINGS = [
-        Binding("ctrl+j", "infer", "Infer answer"),
-        Binding("ctrl+d", "toggle_dark", "Toggle dark mode"),
-        Binding("ctrl+y", "yank", "Yank code block", priority=True),
-        Binding("ctrl+r", "run", "Run code block"),
+        Binding('ctrl+j', 'infer', 'Infer answer'),
+        Binding('ctrl+d', 'toggle_dark', 'Toggle dark mode'),
+        Binding('ctrl+y', 'yank', 'Yank code block', priority=True),
+        Binding('ctrl+r', 'run', 'Run code block'),
     ]
 
     def __init__(self, llm, history, initial_prompt):
@@ -82,36 +82,36 @@ class ShellGPTApp(App):
         try:
             self.infer_inner()
         except Exception as e:
-            answer_output = self.query_one("#answer_output")
-            answer_output.load_text(f"Error when infer: {e}")
+            answer_output = self.query_one('#answer_output')
+            answer_output.load_text(f'Error when infer: {e}')
         finally:
             self.has_inflight_req = False
 
     def get_prompt_input(self) -> Optional[str]:
-        prompt_input = self.query_one("#prompt_input")
+        prompt_input = self.query_one('#prompt_input')
         prompt = prompt_input.text.strip()
-        return None if prompt == "" else prompt
+        return None if prompt == '' else prompt
 
     def get_answer_output(self) -> Optional[str]:
-        out = self.query_one("#answer_output")
+        out = self.query_one('#answer_output')
         text = out.text.strip()
-        return None if text == "" else text
+        return None if text == '' else text
 
     def infer_inner(self) -> None:
         prompt = self.get_prompt_input()
         if prompt is None:
             return
 
-        debug_print(f"infer {prompt}")
+        debug_print(f'infer {prompt}')
         self.history.add(prompt)
         # llm infer
         resp = self.llm.chat(prompt, True)
-        buf = ""
+        buf = ''
         for item in resp:
             buf += item
 
-        debug_print(f"infer ret {buf}")
-        answer_output = self.query_one("#answer_output")
+        debug_print(f'infer ret {buf}')
+        answer_output = self.query_one('#answer_output')
         answer_output.load_text(buf)
 
     def action_yank(self) -> None:
@@ -128,5 +128,5 @@ class ShellGPTApp(App):
 
         cmd = text
         output = execute_cmd(cmd)
-        command_output = self.query_one("#command_output")
+        command_output = self.query_one('#command_output')
         command_output.load_text(output)

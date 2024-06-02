@@ -8,5 +8,5 @@ class TimeoutSession(requests.Session):
         super().__init__()
 
     def request(self, method, url, **kwargs):
-        kwargs.setdefault("timeout", self.default_timeout)
+        kwargs.setdefault('timeout', self.default_timeout)
         return super().request(method, url, **kwargs)
