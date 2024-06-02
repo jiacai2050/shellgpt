@@ -23,7 +23,7 @@ class Ollama(object):
     def chat(self, prompt, stream=True):
         url = self.base_url + '/api/chat'
         debug_print(
-            f'generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}'
+            f'chat: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}'
         )
 
         after, imgs = prepare_prompt(prompt)
@@ -36,6 +36,7 @@ class Ollama(object):
 
         if len(self.messages) > self.max_messages:
             self.messages = self.messages[-self.max_messages :]
+
         payload = {
             'messages': [] if self.system_message is None else [self.system_message],
             'model': model,
@@ -58,4 +59,26 @@ class Ollama(object):
             else:
                 content = resp['message']['content']
                 answer += content
+                yield content
+
+    def generate(self, prompt, stream=True):
+        url = self.base_url + '/api/generate'
+        debug_print(
+            f'generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}'
+        )
+
+        payload = {
+            'model': self.model,
+            'prompt': prompt,
+            'stream': stream,
+            'options': {'temperature': self.temperature},
+        }
+        r = self.http_session.post(url, json=payload, stream=stream)
+        if r.status_code != 200:
+            raise Exception('Error: ' + r.text)
+
+        for item in r.iter_content(chunk_size=None):
+            resp = json.loads(item)
+            if resp['done'] is False:
+                content = resp['response']
                 yield content

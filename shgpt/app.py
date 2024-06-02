@@ -30,16 +30,6 @@ def init_app():
     makedirs(CONF_PATH, exist_ok=True)
 
 
-def read_action(cmd):
-    if IS_TTY:
-        action = input('(E)xecute, (Y)ank or Continue(default): ')
-        action = action.upper()
-        if action == 'E':
-            print(execute_cmd(cmd))
-        elif action == 'Y':
-            copy_text(cmd)
-
-
 class ShellGPT(object):
     def __init__(self, url, model, role, temperature, timeout):
         self.is_shell = role == 'shell'
@@ -84,9 +74,22 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
                 print()
 
             if self.is_shell:
-                read_action(buf)
+                self.repl_action(buf)
         except Exception as e:
             print(f'Error when infer: ${e}')
+
+    def repl_action(self, cmd):
+        if IS_TTY:
+            action = input('(R)un, (Y)ank, (E)xplain: ')
+            action = action.upper()
+            if action == 'E':
+                for r in self.llm.generate(f'Explain this command: {cmd}'):
+                    print(r, end='')
+                print()
+            elif action == 'R':
+                print(execute_cmd(cmd))
+            elif action == 'Y':
+                copy_text(cmd)
 
 
 def main():
