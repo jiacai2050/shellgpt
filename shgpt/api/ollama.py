@@ -24,12 +24,20 @@ class Ollama(object):
         debug_print(
             f"generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}"
         )
-        self.messages.append({"role": "user", "content": prompt})
+
+        after, imgs = prepare_prompt(prompt)
+        model = self.model
+        if len(imgs) > 0:
+            self.messages.append({"role": "user", "content": after, "images": imgs})
+            model = OLLAMA_IMAGE_MODEL
+        else:
+            self.messages.append({"role": "user", "content": prompt})
+
         if len(self.messages) > self.max_messages:
             self.messages = self.messages[-self.max_messages :]
         payload = {
             "messages": [] if self.system_message is None else [self.system_message],
-            "model": self.model,
+            "model": model,
             "stream": stream,
         }
         for m in self.messages:

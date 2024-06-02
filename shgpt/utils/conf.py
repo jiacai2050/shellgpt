@@ -1,14 +1,30 @@
-from os import path, environ
+from os import path, environ, pathsep
 import json
-from .common import OS_NAME, SHELL
+import platform
 
 # Configuration
 CONF_PATH = path.expanduser(environ.get("SHELLGPT_CONF_DIR", "~/.shellgpt"))
 OLLAMA_URL = environ.get("SHELLGPT_OLLAMA_URL", "http://127.0.0.1:11434")
 OLLAMA_MODEL = environ.get("SHELLGPT_OLLAMA_MODEL", "llama3")
+OLLAMA_IMAGE_MODEL = environ.get("SHELLGPT_OLLAMA_IMAGE_MODEL", "llava")
+DEFAULT_IMAGE_DIR = path.expanduser(environ.get("SHELLGPT_IMAGE_DIR", "~/Downloads/"))
 INFER_TIMEOUT = int(environ.get("SHELLGPT_INFER_TIMEOUT", "15"))  # seconds
 MAX_HISTORY = int(environ.get("SHELLGPT_MAX_HISTORY", "1000"))
 MAX_CHAT_MESSAGES = int(environ.get("SHELLGPT_MAX_CHAT_MESSAGES", "10"))
+
+# Auto determined configs
+OS_NAME = platform.system()
+
+
+def get_shell_type():
+    if OS_NAME in ("Windows", "nt"):
+        is_powershell = len(environ.get("PSModulePath", "").split(pathsep)) >= 3
+        return "powershell.exe" if is_powershell else "cmd.exe"
+    return path.basename(environ.get("SHELL", "/bin/sh"))
+
+
+SHELL = get_shell_type()
+
 
 # Built-in roles for different workloads.
 ROLE_CONTENT = {

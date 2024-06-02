@@ -2,25 +2,22 @@ from enum import Enum
 from typing import Optional
 from datetime import datetime
 import re
-import platform
+import base64
 import os
 import subprocess
 import sys
 import pyperclip
 
+from shgpt.utils.conf import CONF_PATH
+
 IS_VERBOSE = False
-OS_NAME = platform.system()
 IS_TTY = sys.stdin.isatty()
 
 
-def get_shell_type():
-    if OS_NAME in ("Windows", "nt"):
-        is_powershell = len(os.getenv("PSModulePath", "").split(os.pathsep)) >= 3
-        return "powershell.exe" if is_powershell else "cmd.exe"
-    return os.path.basename(os.getenv("SHELL", "/bin/sh"))
-
-
-SHELL = get_shell_type()
+class AppMode(Enum):
+    Direct = (1,)
+    TUI = (2,)
+    REPL = (3,)
 
 
 def set_verbose(v):
@@ -64,7 +61,34 @@ def execute_cmd(cmd):
     return subprocess.getoutput(cmd)
 
 
-class AppMode(Enum):
-    Direct = (1,)
-    TUI = (2,)
-    REPL = (3,)
+def base64_image(image_path: str) -> str:
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+
+# https://www.debuggex.com/r/6b2cfvu8bb_stYGu
+FILE_PATH_RE = re.compile(r"(\/|@@)(.*?)(?:\s|$)", re.I | re.M)
+
+
+def extract_paths(txt):
+    return re.findall(FILE_PATH_RE, txt)
+
+
+def gen_path(prefix, left):
+    if prefix == "/":
+        return prefix + left
+    else:
+        return os.path.join(CONF_PATH, left)
+
+
+def prepare_prompt(raw):
+    imgs = [
+        base64_image(gen_path(prefix, path)) for (prefix, path) in extract_paths(raw)
+    ]
+    after = raw if len(imgs) == 0 else re.sub(FILE_PATH_RE, "", raw)
+    return after, imgs
+
+
+if __name__ == "__main__":
+    print(prepare_prompt("hello world /tmp/xxx.png @@xxx.png"))
+    print(prepare_prompt("hello world!"))
