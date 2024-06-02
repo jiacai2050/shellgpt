@@ -29,7 +29,7 @@ def get_shell_type():
 SHELL = get_shell_type()
 
 
-# Built-in roles for different workloads.
+# Built-in system role content for different user cases.
 ROLE_CONTENT = {
     'default': None,
     'code': """

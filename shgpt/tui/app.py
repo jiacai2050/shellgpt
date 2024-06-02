@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult, Binding
 from textual.widgets import Header, Footer, Static, TextArea, Button
 from typing import Optional
-from ..utils.common import copy_text, execute_cmd, debug_print
+from ..utils.common import copy_text, execute_cmd, debug_print, get_executable_script
 
 
 class PromptInput(Static):
@@ -109,6 +109,10 @@ class ShellGPTApp(App):
         buf = ''
         for item in resp:
             buf += item
+
+        script = get_executable_script(buf)
+        if script is not None:
+            buf = script
 
         debug_print(f'infer ret {buf}')
         answer_output = self.query_one('#answer_output')

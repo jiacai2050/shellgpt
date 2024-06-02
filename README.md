@@ -22,7 +22,7 @@ ShellGPT has three modes to use:
 - TUI mode, `sg`, tailored for infer shell command.
 - REPL mode, `sg -l`, chat with LLM.
 
-See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.py) for configs.
+See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.py) for detailed configs.
 
 ## TUI
 
@@ -35,13 +35,13 @@ There are some key bindings to use in TUI: option
 
 ## Role
 
-There are some built-in roles in shellgpt:
+There are 4 built-in [system role contents](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in shellgpt:
 - `default`, used for ask general questions
 - `code`, used for ask programming questions
 - `shell`, used for infer shell command
 - `cm`, used for generate git commit message, like `git diff | sg -r cm`
 
-Users can define their own roles in `~/.shellgpt/roles.json`, it a JSON map with
+Users can define their own content in `~/.shellgpt/roles.json`, it a JSON map with
 - key being role name and
 - value being role content
 

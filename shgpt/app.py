@@ -110,7 +110,12 @@ def main():
         action='store_true',
         help='System role set to `code`',
     )
-    parser.add_argument('-r', '--role', default='default', help='System role to use')
+    parser.add_argument(
+        '-r',
+        '--role',
+        default='default',
+        help='System role to use, (default: %(default)s)',
+    )
     parser.add_argument(
         '-l', '--repl', action='store_true', help='Start interactive REPL'
     )
@@ -119,16 +124,23 @@ def main():
     parser.add_argument(
         '--timeout',
         type=int,
-        help='Timeout for each inference request',
+        help='Timeout in seconds for each inference request (default: %(default)d)',
         default=INFER_TIMEOUT,
     )
-    parser.add_argument('--ollama-url', default=OLLAMA_URL, help='Ollama URL')
-    parser.add_argument('-m', '--ollama-model', default='llama3', help='Ollama model')
+    parser.add_argument(
+        '--ollama-url', default=OLLAMA_URL, help='Ollama URL (default: %(default)s)'
+    )
+    parser.add_argument(
+        '-m',
+        '--ollama-model',
+        default='llama3',
+        help='Ollama model (default: %(default)s)',
+    )
     parser.add_argument(
         '--temperature',
         default=OLLAMA_TEMPERATURE,
         type=float,
-        help='The temperature of the model. Increasing the temperature will make the model answer more creatively.',
+        help='The temperature of the model. Increasing the temperature will make the model answer more creatively. (default: %(default).2f)',
     )
     parser.add_argument('-v', '--verbose', action='store_true', help='verbose mode')
     parser.add_argument('prompt', metavar='<prompt>', nargs='*')
