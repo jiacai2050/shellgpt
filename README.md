@@ -26,7 +26,7 @@ See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.
 
 ## TUI
 
-There are some key bindings to use in TUI: option
+There are 3 key bindings to use in TUI:
 - `ctrl+j`, Infer answer
 - `ctrl+r`, Run command
 - `ctrl+y`, Yank command

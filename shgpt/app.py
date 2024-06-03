@@ -16,7 +16,7 @@ from .utils.common import (
     execute_cmd,
     copy_text,
     read_stdin,
-    get_executable_script,
+    extract_code,
     set_verbose,
     debug_print,
     AppMode,
@@ -66,7 +66,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
                     print(r, end='')
 
             if self.is_shell:
-                shell = get_executable_script(buf)
+                shell = extract_code(buf)
                 if shell is not None:
                     buf = shell
                 print(buf)

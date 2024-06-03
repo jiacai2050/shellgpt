@@ -21,6 +21,9 @@ lint:
 shell:
 	hatch shell
 
+ut:
+	hatch run python -m unittest -v
+
 roles:
 	@ python download-roles.py
 

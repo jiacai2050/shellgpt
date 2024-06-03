@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult, Binding
 from textual.widgets import Header, Footer, Static, TextArea, Button
 from typing import Optional
-from ..utils.common import copy_text, execute_cmd, debug_print, get_executable_script
+from ..utils.common import copy_text, execute_cmd, debug_print, extract_code
 
 
 class PromptInput(Static):
@@ -110,7 +110,7 @@ class ShellGPTApp(App):
         for item in resp:
             buf += item
 
-        script = get_executable_script(buf)
+        script = extract_code(buf)
         if script is not None:
             buf = script
 

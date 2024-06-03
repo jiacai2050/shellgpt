@@ -1,6 +1,6 @@
 import json
 from ..utils.http import TimeoutSession
-from ..utils.common import debug_print, prepare_prompt
+from ..utils.common import base64_image, debug_print, prepare_prompt
 from ..utils.conf import MAX_CHAT_MESSAGES, OLLAMA_IMAGE_MODEL, ROLE_CONTENT
 
 
@@ -29,6 +29,7 @@ class Ollama(object):
         after, imgs = prepare_prompt(prompt)
         model = self.model
         if len(imgs) > 0:
+            imgs = [base64_image(img) for img in imgs]
             self.messages.append({'role': 'user', 'content': after, 'images': imgs})
             model = OLLAMA_IMAGE_MODEL
         else:

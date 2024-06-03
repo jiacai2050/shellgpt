@@ -8,7 +8,7 @@ import subprocess
 import sys
 import pyperclip
 
-from shgpt.utils.conf import CONF_PATH, IS_TTY
+from shgpt.utils.conf import DEFAULT_IMAGE_DIR, IS_TTY
 
 IS_VERBOSE = False
 
@@ -29,12 +29,12 @@ def debug_print(msg):
         print(msg)
 
 
-def get_executable_script(text: str) -> Optional[str]:
-    script_blocks = re.findall('```(.*?)\n(.*?)```', text, re.DOTALL)
-    if len(script_blocks) == 0:
+def extract_code(text: str) -> Optional[str]:
+    code = re.findall('```(?:.*?)\n(.*?)```', text, re.DOTALL)
+    if len(code) == 0:
         return None
     else:
-        return script_blocks[0][1].strip()
+        return code[0].strip()
 
 
 def now_ms():
@@ -66,7 +66,7 @@ def base64_image(image_path: str) -> str:
 
 
 # https://www.debuggex.com/r/6b2cfvu8bb_stYGu
-FILE_PATH_RE = re.compile(r'(\/|@@)(.*?)(?:\s|$)', re.I | re.M)
+FILE_PATH_RE = re.compile(r' (\/|@@)(.*?)(?:\s|$)', re.I | re.M)
 
 
 def extract_paths(txt):
@@ -77,17 +77,10 @@ def gen_path(prefix, left):
     if prefix == '/':
         return prefix + left
     else:
-        return os.path.join(CONF_PATH, left)
+        return os.path.join(DEFAULT_IMAGE_DIR, left)
 
 
 def prepare_prompt(raw):
-    imgs = [
-        base64_image(gen_path(prefix, path)) for (prefix, path) in extract_paths(raw)
-    ]
+    imgs = [gen_path(prefix, path) for (prefix, path) in extract_paths(raw)]
     after = raw if len(imgs) == 0 else re.sub(FILE_PATH_RE, '', raw)
     return after, imgs
-
-
-if __name__ == '__main__':
-    print(prepare_prompt('hello world /tmp/xxx.png @@xxx.png'))
-    print(prepare_prompt('hello world!'))
