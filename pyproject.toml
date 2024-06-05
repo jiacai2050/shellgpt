@@ -19,7 +19,8 @@ dependencies = [
 classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Software Development",
-    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Intended Audience :: Information Technology",
     "Intended Audience :: System Administrators",
     "Intended Audience :: Developers",
@@ -47,6 +48,7 @@ path = "shgpt/version.py"
 [tool.hatch.build.targets.sdist]
 include = [
   "shgpt",
+  "tests",
   "pyproject.toml",
   "README.md",
   "Makefile",
