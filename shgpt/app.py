@@ -164,11 +164,10 @@ def main():
     elif args.tui:
         app_mode = AppMode.TUI
     else:
-        app_mode = AppMode.TUI if len(prompt) == 0 else AppMode.Direct
+        app_mode = AppMode.REPL if len(prompt) == 0 else AppMode.Direct
 
     role = args.role
-    # tui default to shell role
-    if args.shell or app_mode == AppMode.TUI:
+    if args.shell:
         role = 'shell'
     elif args.code:
         role = 'code'

@@ -66,21 +66,23 @@ def base64_image(image_path: str) -> str:
 
 
 # https://www.debuggex.com/r/6b2cfvu8bb_stYGu
-FILE_PATH_RE = re.compile(r' (\/|@@)(.*?)(?:\s|$)', re.I | re.M)
+FILE_PATH_RE = re.compile(r' (\/|@@)(.*?)\.(jpg|png)(?:\s|$)')
 
 
 def extract_paths(txt):
-    return re.findall(FILE_PATH_RE, txt)
+    r = re.findall(FILE_PATH_RE, txt)
+    return r
 
 
-def gen_path(prefix, left):
+def gen_path(prefix, left, suffix):
+    name = left + '.' + suffix
     if prefix == '/':
-        return prefix + left
+        return prefix + name
     else:
-        return os.path.join(DEFAULT_IMAGE_DIR, left)
+        return os.path.join(DEFAULT_IMAGE_DIR, name)
 
 
 def prepare_prompt(raw):
-    imgs = [gen_path(prefix, path) for (prefix, path) in extract_paths(raw)]
+    imgs = [gen_path(prefix, path, suffix) for (prefix, path, suffix) in extract_paths(raw)]
     after = raw if len(imgs) == 0 else re.sub(FILE_PATH_RE, '', raw)
     return after, imgs

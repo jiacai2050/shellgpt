@@ -8,8 +8,11 @@ class TestCommon(unittest.TestCase):
     def test_prepare_prompt(self):
         for args, expected in [
             ('hello', ('hello', [])),
+            ('https://liujiacai.net/', ('https://liujiacai.net/', [])),
+            ('//', ('//', [])),
             ('hello @@test.png', ('hello', [path.join(DEFAULT_IMAGE_DIR, 'test.png')])),
             ('hello /tmp/test.png', ('hello', ['/tmp/test.png'])),
+            ('hello/tmp/te\nst.png', ('hello/tmp/te\nst.png', [])),
             ('hello/tmp/test.png', ('hello/tmp/test.png', [])),
             ('hello@@test.png', ('hello@@test.png', [])),
         ]:
