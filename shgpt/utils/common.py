@@ -83,6 +83,8 @@ def gen_path(prefix, left, suffix):
 
 
 def prepare_prompt(raw):
-    imgs = [gen_path(prefix, path, suffix) for (prefix, path, suffix) in extract_paths(raw)]
+    imgs = [
+        gen_path(prefix, path, suffix) for (prefix, path, suffix) in extract_paths(raw)
+    ]
     after = raw if len(imgs) == 0 else re.sub(FILE_PATH_RE, '', raw)
     return after, imgs

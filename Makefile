@@ -1,5 +1,5 @@
 tui:
-	@ python -m shgpt
+	@ python -m shgpt -t
 
 repl:
 	@ python -m shgpt -l

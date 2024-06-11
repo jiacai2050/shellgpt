@@ -1,18 +1,18 @@
 import json
 from ..utils.http import TimeoutSession
 from ..utils.common import base64_image, debug_print, prepare_prompt
-from ..utils.conf import MAX_CHAT_MESSAGES, OLLAMA_IMAGE_MODEL, ROLE_CONTENT
+from ..utils.conf import OLLAMA_IMAGE_MODEL, ROLE_CONTENT
 
 
 # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
 class Ollama(object):
-    def __init__(self, base_url, model, role, temperature, timeout):
+    def __init__(self, base_url, model, role, temperature, timeout, max_messages):
         self.base_url = base_url
         self.http_session = TimeoutSession(timeout=timeout)
         self.model = model
         self.role = role
         self.temperature = temperature
-        self.max_messages = MAX_CHAT_MESSAGES
+        self.max_messages = max_messages
         self.system_message = (
             None
             if role == 'default'

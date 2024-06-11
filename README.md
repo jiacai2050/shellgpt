@@ -56,6 +56,8 @@ $ shgpt -r javascript-console 0.1 + 0.2
 
 ```
 
+Users can share their customized roles in [discuss section](https://github.com/jiacai2050/shellgpt/discussions).
+
 # Requirements
 - [Ollama](https://ollama.com/), you need to download models before try shellgpt.
 

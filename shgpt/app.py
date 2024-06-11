@@ -4,6 +4,7 @@ from os import makedirs
 from .api.ollama import Ollama
 from .version import __version__
 from .utils.conf import (
+    MAX_CHAT_MESSAGES,
     load_roles_from_config,
     INFER_TIMEOUT,
     OLLAMA_URL,
@@ -31,9 +32,9 @@ def init_app():
 
 
 class ShellGPT(object):
-    def __init__(self, url, model, role, temperature, timeout):
+    def __init__(self, url, model, role, temperature, timeout, max_messages):
         self.is_shell = role == 'shell'
-        self.llm = Ollama(url, model, role, temperature, timeout)
+        self.llm = Ollama(url, model, role, temperature, timeout, max_messages)
 
     def tui(self, history, initial_prompt):
         app = ShellGPTApp(self.llm, history, initial_prompt)
@@ -140,6 +141,13 @@ def main():
         help='Ollama model (default: %(default)s)',
     )
     parser.add_argument(
+        '-M',
+        '--max-messages',
+        type=int,
+        default=MAX_CHAT_MESSAGES,
+        help='Max history messages (default: %(default)s)',
+    )
+    parser.add_argument(
         '--temperature',
         default=OLLAMA_TEMPERATURE,
         type=float,
@@ -183,7 +191,12 @@ def main():
         sys.exit(1)
 
     sg = ShellGPT(
-        args.ollama_url, args.ollama_model, role, args.temperature, args.timeout
+        args.ollama_url,
+        args.ollama_model,
+        role,
+        args.temperature,
+        args.timeout,
+        args.max_messages,
     )
     history = History()
     if prompt != '':
