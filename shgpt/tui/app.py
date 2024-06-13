@@ -50,12 +50,16 @@ class ShellGPTApp(App):
         Binding('ctrl+r', 'run', 'Run code block'),
     ]
 
-    def __init__(self, llm, history, initial_prompt):
+    def __init__(self, llm, model, history, initial_prompt):
         self.llm = llm
+        self.model = model
         self.history = history
         self.has_inflight_req = False
         self.initial_prompt = initial_prompt
         super().__init__()
+
+    def on_mount(self) -> None:
+        self.title = f'ShellGPT({self.model})'
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -105,7 +109,7 @@ class ShellGPTApp(App):
         debug_print(f'infer {prompt}')
         self.history.add(prompt)
         # llm infer
-        resp = self.llm.chat(prompt, True)
+        resp = self.llm.chat(prompt, self.model)
         buf = ''
         for item in resp:
             buf += item

@@ -34,11 +34,27 @@ def init_app():
 class ShellGPT(object):
     def __init__(self, url, model, role, temperature, timeout, max_messages):
         self.is_shell = role == 'shell'
-        self.llm = Ollama(url, model, role, temperature, timeout, max_messages)
+        self.model = model
+        self.llm = Ollama(url, role, temperature, timeout, max_messages)
 
     def tui(self, history, initial_prompt):
-        app = ShellGPTApp(self.llm, history, initial_prompt)
+        app = ShellGPTApp(self.llm, self.model, history, initial_prompt)
         app.run()
+
+    # return True if cmd is a valid action
+    def set_action(self, cmd):
+        args = cmd.split(' ')
+        if len(args) < 3:
+            return False
+
+        # only support `set model <model>`
+        action = args[1]
+        arg = args[2]
+        if action == 'model':
+            self.model = arg
+            return True
+
+        return False
 
     def repl(self, initial_prompt):
         print(r"""
@@ -46,12 +62,17 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 \ \    / /__| |__ ___ _ __  ___  | |_ ___  / __| |_  ___| | |/ __| _ \_   _|
  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
+
+Type 'exit' to quit.
 """)
         self.infer(initial_prompt)
         while True:
-            prompt = input('> ')
+            prompt = input(f'({self.model})> ')
             if 'exit' == prompt:
                 sys.exit(0)
+            elif prompt.startswith('set'):
+                if self.set_action(prompt):
+                    continue
 
             self.infer(prompt)
 
@@ -61,7 +82,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 
         buf = ''
         try:
-            for r in self.llm.chat(prompt):
+            for r in self.llm.chat(prompt, self.model):
                 buf += r
                 if self.is_shell is False:
                     print(r, end='')
@@ -84,7 +105,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
             action = input('(R)un, (Y)ank, (E)xplain: ')
             action = action.upper()
             if action == 'E':
-                for r in self.llm.generate(f'Explain this command: {cmd}'):
+                for r in self.llm.generate(f'Explain this command: {cmd}', self.model):
                     print(r, end='')
                 print()
             elif action == 'R':
@@ -136,9 +157,9 @@ def main():
     )
     parser.add_argument(
         '-m',
-        '--ollama-model',
+        '--model',
         default='llama3',
-        help='Ollama model (default: %(default)s)',
+        help='large language model(default: %(default)s)',
     )
     parser.add_argument(
         '-M',
@@ -192,7 +213,7 @@ def main():
 
     sg = ShellGPT(
         args.ollama_url,
-        args.ollama_model,
+        args.model,
         role,
         args.temperature,
         args.timeout,

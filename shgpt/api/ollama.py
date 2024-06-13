@@ -6,10 +6,9 @@ from ..utils.conf import OLLAMA_IMAGE_MODEL, ROLE_CONTENT
 
 # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
 class Ollama(object):
-    def __init__(self, base_url, model, role, temperature, timeout, max_messages):
+    def __init__(self, base_url, role, temperature, timeout, max_messages):
         self.base_url = base_url
         self.http_session = TimeoutSession(timeout=timeout)
-        self.model = model
         self.role = role
         self.temperature = temperature
         self.max_messages = max_messages
@@ -20,14 +19,13 @@ class Ollama(object):
         )
         self.messages = []
 
-    def chat(self, prompt, stream=True):
+    def chat(self, prompt, model, stream=True):
         url = self.base_url + '/api/chat'
         debug_print(
-            f'chat: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}'
+            f'chat: {prompt} to {url} with model {model} role {self.role} and stream {stream}'
         )
 
         after, imgs = prepare_prompt(prompt)
-        model = self.model
         if len(imgs) > 0:
             imgs = [base64_image(img) for img in imgs]
             self.messages.append({'role': 'user', 'content': after, 'images': imgs})
@@ -62,14 +60,14 @@ class Ollama(object):
                 answer += content
                 yield content
 
-    def generate(self, prompt, stream=True):
+    def generate(self, prompt, model, stream=True):
         url = self.base_url + '/api/generate'
         debug_print(
-            f'generate: {prompt} to {url} with model {self.model} role {self.role} and stream {stream}'
+            f'generate: {prompt} to {url} with model {model} role {self.role} and stream {stream}'
         )
 
         payload = {
-            'model': self.model,
+            'model': model,
             'prompt': prompt,
             'stream': stream,
             'options': {'temperature': self.temperature},
