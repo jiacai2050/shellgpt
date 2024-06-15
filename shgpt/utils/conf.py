@@ -5,14 +5,15 @@ import platform
 
 # Configuration
 CONF_PATH = path.expanduser(environ.get('SHELLGPT_CONF_DIR', '~/.shellgpt'))
-OLLAMA_URL = environ.get('SHELLGPT_OLLAMA_URL', 'http://127.0.0.1:11434')
-OLLAMA_MODEL = environ.get('SHELLGPT_OLLAMA_MODEL', 'llama3')
-OLLAMA_IMAGE_MODEL = environ.get('SHELLGPT_OLLAMA_IMAGE_MODEL', 'llava')
-OLLAMA_TEMPERATURE = float(environ.get('SHELLGPT_OLLAMA_TEMPERATURE', '0.8'))
+API_URL = environ.get('SHELLGPT_API_URL', 'http://127.0.0.1:11434')
+API_KEY = environ.get('SHELLGPT_API_KEY', '')
+MODEL = environ.get('SHELLGPT_MODEL', 'llama3')
+IMAGE_MODEL = environ.get('SHELLGPT_IMAGE_MODEL', 'llava')
+TEMPERATURE = float(environ.get('SHELLGPT_TEMPERATURE', '0.8'))
 DEFAULT_IMAGE_DIR = path.expanduser(environ.get('SHELLGPT_IMAGE_DIR', '~/Pictures'))
 INFER_TIMEOUT = int(environ.get('SHELLGPT_INFER_TIMEOUT', '15'))  # seconds
 MAX_HISTORY = int(environ.get('SHELLGPT_MAX_HISTORY', '1000'))
-MAX_CHAT_MESSAGES = int(environ.get('SHELLGPT_MAX_CHAT_MESSAGES', '10'))
+MAX_CHAT_MESSAGES = int(environ.get('SHELLGPT_MAX_CHAT_MESSAGES', '3'))
 
 # Auto determined configs
 OS_NAME = platform.system()

@@ -17,6 +17,20 @@ After install, use `sg --init` to create required directories(mainly `~/.shellgp
 
 # Usage
 
+## Basic
+By default, `shellgpt` uses [Ollama](https://ollama.com/) as its language model backend, requiring installation prior to usage. Alternatively, one can set up `shellgpt` to utilize [OpenAI compatible](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/) API endpoints:
+
+```bash
+export SHELLGPT_API_URL=https://api.openai.com/
+export SHELLGPT_API_KEY=<token>
+export SHELLGPT_MODEL='gpt-3.5-turbo'
+
+# or Cloudflare Worker AI
+export SHELLGPT_API_URL=https://api.cloudflare.com/client/v4/accounts/<account-id>/ai
+export SHELLGPT_API_KEY=<token>
+export SHELLGPT_MODEL='@cf/meta/llama-3-8b-instruct'
+```
+
 ShellGPT has three modes to use:
 - Direct mode, `sg [question]` or pipeline like `echo question | sg`.
 - TUI mode, `sg`, tailored for infer shell command.
@@ -57,9 +71,6 @@ $ shgpt -r javascript-console 0.1 + 0.2
 ```
 
 Users can share their customized roles in [discuss section](https://github.com/jiacai2050/shellgpt/discussions).
-
-# Requirements
-- [Ollama](https://ollama.com/), you need to download models before try shellgpt.
 
 # License
 

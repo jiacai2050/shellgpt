@@ -4,11 +4,13 @@ from os import makedirs
 from .api.ollama import Ollama
 from .version import __version__
 from .utils.conf import (
+    API_KEY,
     MAX_CHAT_MESSAGES,
+    MODEL,
     load_roles_from_config,
     INFER_TIMEOUT,
-    OLLAMA_URL,
-    OLLAMA_TEMPERATURE,
+    API_URL,
+    TEMPERATURE,
     ROLE_CONTENT,
     CONF_PATH,
     IS_TTY,
@@ -32,13 +34,32 @@ def init_app():
 
 
 class ShellGPT(object):
-    def __init__(self, url, model, role, temperature, timeout, max_messages):
+    def __init__(self, url, key, model, role, temperature, timeout, max_messages):
         self.is_shell = role == 'shell'
-        self.llm = Ollama(url, model, role, temperature, timeout, max_messages)
+        self.model = model
+        self.llm = Ollama(url, key, role, temperature, timeout, max_messages)
 
     def tui(self, history, initial_prompt):
-        app = ShellGPTApp(self.llm, history, initial_prompt)
+        app = ShellGPTApp(self.model, self.llm, history, initial_prompt)
         app.run()
+
+    # return true when prompt is a set command
+    def repl_action(self, prompt):
+        if 'exit' == prompt:
+            sys.exit(0)
+        if prompt.startswith('set') is False:
+            return False
+
+        args = prompt.split(' ')
+        if len(args) != 3:
+            return False
+
+        sub_cmd = args[1]
+        if sub_cmd == 'model':
+            self.model = args[2]
+            return True
+
+        return False
 
     def repl(self, initial_prompt):
         print(r"""
@@ -49,9 +70,9 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 """)
         self.infer(initial_prompt)
         while True:
-            prompt = input('> ')
-            if 'exit' == prompt:
-                sys.exit(0)
+            prompt = input(f'{self.model}> ')
+            if self.repl_action(prompt):
+                continue
 
             self.infer(prompt)
 
@@ -61,10 +82,10 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 
         buf = ''
         try:
-            for r in self.llm.chat(prompt):
+            for r in self.llm.chat(self.model, prompt):
                 buf += r
                 if self.is_shell is False:
-                    print(r, end='')
+                    print(r, end='', flush=True)
 
             if self.is_shell:
                 shell = extract_code(buf)
@@ -75,22 +96,26 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
                 print()
 
             if self.is_shell:
-                self.repl_action(buf)
+                self.shell_action(buf)
         except Exception as e:
             print(f'Error when infer: ${e}')
 
-    def repl_action(self, cmd):
+    def shell_action(self, cmd):
         if IS_TTY:
-            action = input('(R)un, (Y)ank, (E)xplain: ')
+            action = input('(R)un, (Y)ank, (E)xplain> ')
             action = action.upper()
             if action == 'E':
-                for r in self.llm.generate(f'Explain this command: {cmd}'):
-                    print(r, end='')
+                for r in self.llm.chat(
+                    self.model, f'Explain this command: {cmd}', add_system_message=False
+                ):
+                    print(r, end='', flush=True)
                 print()
             elif action == 'R':
                 print(execute_cmd(cmd))
             elif action == 'Y':
                 copy_text(cmd)
+            else:
+                self.infer(action)
 
 
 def main():
@@ -132,12 +157,15 @@ def main():
         default=INFER_TIMEOUT,
     )
     parser.add_argument(
-        '--ollama-url', default=OLLAMA_URL, help='Ollama URL (default: %(default)s)'
+        '--api-url', default=API_URL, help='API base URL (default: %(default)s)'
+    )
+    parser.add_argument(
+        '--api-key', default=API_KEY, help='API Key (default: %(default)s)'
     )
     parser.add_argument(
         '-m',
-        '--ollama-model',
-        default='llama3',
+        '--model',
+        default=MODEL,
         help='Ollama model (default: %(default)s)',
     )
     parser.add_argument(
@@ -149,7 +177,7 @@ def main():
     )
     parser.add_argument(
         '--temperature',
-        default=OLLAMA_TEMPERATURE,
+        default=TEMPERATURE,
         type=float,
         help='The temperature of the model. Increasing the temperature will make the model answer more creatively. (default: %(default).2f)',
     )
@@ -175,7 +203,7 @@ def main():
         app_mode = AppMode.REPL if len(prompt) == 0 else AppMode.Direct
 
     role = args.role
-    if args.shell:
+    if args.shell or app_mode == AppMode.TUI:
         role = 'shell'
     elif args.code:
         role = 'code'
@@ -191,8 +219,9 @@ def main():
         sys.exit(1)
 
     sg = ShellGPT(
-        args.ollama_url,
-        args.ollama_model,
+        args.api_url,
+        args.api_key,
+        args.model,
         role,
         args.temperature,
         args.timeout,
