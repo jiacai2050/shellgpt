@@ -50,6 +50,9 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
     'cm': """
     Generate git commit message for this changes.
     """,
+    'typo': '''
+    You are now an article correction assistant. You need to find out the input text in the spelling errors, incoherent places, can only return the corrected text, without any explanation. The output keeps the original format and language output, don't modify the style, and keey the code blocks unchanged.
+    '''
 }
 
 

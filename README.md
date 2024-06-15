@@ -53,6 +53,7 @@ There are 4 built-in [system role contents](https://platform.openai.com/docs/gui
 - `default`, used for ask general questions
 - `code`, used for ask programming questions
 - `shell`, used for infer shell command
+- `typo`, used for correct article typos.
 - `cm`, used for generate git commit message, like `git diff | sg -r cm`
 
 Users can define their own content in `~/.shellgpt/roles.json`, it a JSON map with
