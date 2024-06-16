@@ -7,8 +7,9 @@ import os
 import subprocess
 import sys
 import pyperclip
+import json
 
-from shellgpt.utils.conf import DEFAULT_IMAGE_DIR, IS_TTY
+from shellgpt.utils.conf import DEFAULT_IMAGE_DIR, IS_TTY, SYSTEM_CONTENT, CONF_PATH
 
 IS_VERBOSE = False
 
@@ -88,3 +89,16 @@ def prepare_prompt(raw):
     ]
     after = raw if len(imgs) == 0 else re.sub(FILE_PATH_RE, '', raw)
     return after, imgs
+
+
+def load_contents_from_config(throw_ex=False):
+    try:
+        conf_file = os.path.join(CONF_PATH, 'contents.json')
+        with open(conf_file) as r:
+            contents = json.loads(r.read())
+            global SYSTEM_CONTENT
+            SYSTEM_CONTENT.update(contents)
+    except Exception as e:
+        debug_print(f'Error when load contents: ${e}')
+        if throw_ex:
+            raise e

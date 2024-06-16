@@ -63,7 +63,7 @@ There are some built-in [system contents](https://platform.openai.com/docs/guide
 - `slug`, used for generate URL slug.
 - `code`, used for ask programming questions
 - `shell`, used for infer shell command
-- `commit`, used for generate git commit message, like `git diff | sg -r commit`
+- `commit`, used for generate git commit message, like `git diff | sg -c commit`
 
 Users can define their own content in `~/.shellgpt/contents.json`, it a JSON map with
 - key being content name and
@@ -72,10 +72,10 @@ Users can define their own content in `~/.shellgpt/contents.json`, it a JSON map
 Or you can just copy [contents.json](https://github.com/jiacai2050/shellgpt/blob/main/contents.json) to play with, it's generated from [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts/blob/main/prompts.csv).
 
 ```bash
-$ sg -r linux-terminal pwd
+$ sg -c linux-terminal pwd
 /home/user
 
-$ sg -r javascript-console 0.1 + 0.2
+$ sg -c javascript-console 0.1 + 0.2
 0.3
 
 ```

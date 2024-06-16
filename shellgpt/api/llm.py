@@ -3,14 +3,14 @@ import json
 from ..utils.http import TimeoutSession
 from ..utils.common import base64_image, debug_print, prepare_prompt
 from ..utils.conf import IMAGE_MODEL, SYSTEM_CONTENT
+from urllib.parse import urljoin
 
 
 def get_system_content(sc):
     return None if sc == 'default' else SYSTEM_CONTENT.get(sc)
 
 
-# https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
-class Ollama(object):
+class LLM(object):
     def __init__(
         self, base_url, key, model, system_content, temperature, timeout, max_messages
     ):
@@ -36,7 +36,7 @@ class Ollama(object):
         )
 
     def chat_openai(self, prompt, stream, add_system_message):
-        url = f'{self.base_url}/v1/chat/completions'
+        url = urljoin(self.base_url, '/v1/chat/completions')
         debug_print(
             f'chat: {prompt} to {url} with model {self.model} system_content {self.system_content} and stream {stream}'
         )
@@ -112,9 +112,10 @@ class Ollama(object):
 
         return msgs, model
 
+    # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
     def chat_ollama(self, prompt, stream, add_system_message):
         model = self.model
-        url = self.base_url + '/api/chat'
+        url = urljoin(self.base_url, '/api/chat')
         debug_print(
             f'chat: {prompt} to {url} with model {model} system_content {self.system_content} and stream {stream}'
         )

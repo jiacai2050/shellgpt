@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import json
 import csv
 import subprocess
@@ -11,7 +14,15 @@ def main():
     rdr = csv.reader(out.split('\n'))
     contents = {}
     for row in rdr:
-        name = row[0].replace(' ', '-').replace('`', '').replace('/', '-').lower()
+        name = (
+            row[0]
+            .replace('(', '')
+            .replace(')', '')
+            .replace(' ', '-')
+            .replace('`', '')
+            .replace('/', '-')
+            .lower()
+        )
         if name == 'act':
             # skip first row
             continue

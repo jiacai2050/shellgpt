@@ -1,4 +1,4 @@
-from shellgpt.api.ollama import Ollama
+from shellgpt.api.llm import LLM
 import unittest
 
 from shellgpt.utils.conf import SYSTEM_CONTENT
@@ -6,7 +6,7 @@ from shellgpt.utils.conf import SYSTEM_CONTENT
 
 class TestLLM(unittest.TestCase):
     def test_make_message_default(self):
-        llm = Ollama('url', 'key', 'llama3', 'default', 0.8, 10, 2)
+        llm = LLM('url', 'key', 'llama3', 'default', 0.8, 10, 2)
         for prompt, expected_msg in [
             ('111', [{'content': '111', 'role': 'user'}]),
             (
@@ -40,7 +40,7 @@ class TestLLM(unittest.TestCase):
         )
 
     def test_make_message_typo(self):
-        llm = Ollama('url', 'key', 'llama3', 'typo', 0.8, 10, 2)
+        llm = LLM('url', 'key', 'llama3', 'typo', 0.8, 10, 2)
 
         actual = llm.make_messages('hi', True, True)
         self.assertEqual(

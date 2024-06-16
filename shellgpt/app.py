@@ -1,12 +1,11 @@
 import argparse
 import sys
 from os import makedirs
-from .api.ollama import Ollama
+from .api.llm import LLM
 from .utils.conf import (
     API_KEY,
     MAX_CHAT_MESSAGES,
     MODEL,
-    load_contents_from_config,
     INFER_TIMEOUT,
     API_URL,
     TEMPERATURE,
@@ -15,12 +14,12 @@ from .utils.conf import (
     IS_TTY,
 )
 from .utils.common import (
+    load_contents_from_config,
     execute_cmd,
     copy_text,
     read_stdin,
     extract_code,
     set_verbose,
-    debug_print,
     AppMode,
 )
 from .tui.app import ShellGPTApp
@@ -34,12 +33,18 @@ def init_app():
     makedirs(CONF_PATH, exist_ok=True)
 
 
+def list_content():
+    load_contents_from_config(True)
+    for n in SYSTEM_CONTENT:
+        print(n)
+
+
 class ShellGPT(object):
     def __init__(
         self, url, key, model, system_content, temperature, timeout, max_messages
     ):
         self.is_shell = system_content == 'shell'
-        self.llm = Ollama(
+        self.llm = LLM(
             url, key, model, system_content, temperature, timeout, max_messages
         )
 
@@ -134,11 +139,7 @@ def load_system_content_when_necessary(sc):
     if sc in SYSTEM_CONTENT:
         return True
 
-    try:
-        load_contents_from_config()
-    except Exception as e:
-        debug_print(f'Error when load contents: ${e}')
-
+    load_contents_from_config()
     return sc in SYSTEM_CONTENT
 
 
@@ -149,33 +150,29 @@ def main():
     )
 
     parser.add_argument(
-        '-V', '--version', action='version', version='%(prog)s ' + __version__
+        '-r', '--repl', action='store_true', help='enter interactive REPL'
     )
+    parser.add_argument('-t', '--tui', action='store_true', help='enter TUI mode')
     parser.add_argument(
         '-s',
         '--shell',
         action='store_true',
-        help='System content set to `shell`',
+        help='system content set to `shell`',
     )
     parser.add_argument(
         '-c',
-        '--system-content',
+        '--content',
         default='default',
-        help='System content to use, (default: %(default)s)',
+        help='content for system role (default: %(default)s)',
     )
-    parser.add_argument(
-        '-l', '--repl', action='store_true', help='Start interactive REPL'
-    )
-    parser.add_argument('-t', '--tui', action='store_true', help='Start TUI mode')
-    parser.add_argument('--init', action='store_true', help='Init config')
     parser.add_argument(
         '--timeout',
         type=int,
-        help='Timeout in seconds for each inference request (default: %(default)d)',
+        help='timeout in seconds for each inference (default: %(default)d)',
         default=INFER_TIMEOUT,
     )
     parser.add_argument(
-        '--api-url', default=API_URL, help='API base URL (default: %(default)s)'
+        '--api-url', default=API_URL, help='base API URL (default: %(default)s)'
     )
     parser.add_argument(
         '--api-key', default=API_KEY, help='API Key (default: %(default)s)'
@@ -184,28 +181,38 @@ def main():
         '-m',
         '--model',
         default=MODEL,
-        help='Ollama model (default: %(default)s)',
+        help='model (default: %(default)s)',
     )
     parser.add_argument(
         '-M',
         '--max-messages',
         type=int,
         default=MAX_CHAT_MESSAGES,
-        help='Max history messages (default: %(default)s)',
+        help='max history messages (default: %(default)s)',
     )
     parser.add_argument(
         '--temperature',
         default=TEMPERATURE,
         type=float,
-        help='The temperature of the model. Increasing the temperature will make the model answer more creatively. (default: %(default).2f)',
+        help='increasing the temperature will make the model answer more creatively. (default: %(default).2f)',
     )
+    parser.add_argument(
+        '--init', action='store_true', help='create required directories'
+    )
+    parser.add_argument('--list', action='store_true', help='list known system content')
     parser.add_argument('-v', '--verbose', action='store_true', help='verbose mode')
+    parser.add_argument(
+        '-V', '--version', action='version', version='%(prog)s ' + __version__
+    )
     parser.add_argument('prompt', metavar='<prompt>', nargs='*')
     args = parser.parse_args()
     set_verbose(args.verbose)
 
     if args.init:
         init_app()
+        sys.exit(0)
+    elif args.list:
+        list_content()
         sys.exit(0)
 
     sin = read_stdin()
@@ -220,7 +227,7 @@ def main():
     else:
         app_mode = AppMode.REPL if len(prompt) == 0 else AppMode.Direct
 
-    system_content = args.system_content
+    system_content = args.content
     if args.shell or app_mode == AppMode.TUI:
         system_content = 'shell'
 

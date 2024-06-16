@@ -1,6 +1,5 @@
 from os import path, environ, pathsep
 import sys
-import json
 import platform
 
 # Configuration
@@ -52,11 +51,3 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
     """,
     'slug': 'You are now a slug generator. I will give you some sentences, and you will reply with a slug version of those sentences. A slug is a URL-friendly version of a title, where spaces are replaced with hyphens, and all characters are lowercased. Do not include any special characters, and keep the output in English.',
 }
-
-
-def load_contents_from_config():
-    conf_file = path.join(CONF_PATH, 'contents.json')
-    with open(conf_file) as r:
-        contents = json.loads(r.read())
-        global SYSTEM_CONTENT
-        SYSTEM_CONTENT.update(contents)
