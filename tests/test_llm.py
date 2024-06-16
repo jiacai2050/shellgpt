@@ -1,7 +1,7 @@
-from shgpt.api.ollama import Ollama
+from shellgpt.api.ollama import Ollama
 import unittest
 
-from shgpt.utils.conf import SYSTEM_CONTENT
+from shellgpt.utils.conf import SYSTEM_CONTENT
 
 
 class TestLLM(unittest.TestCase):

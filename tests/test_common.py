@@ -1,5 +1,5 @@
-from shgpt.utils.common import extract_code, prepare_prompt
-from shgpt.utils.conf import DEFAULT_IMAGE_DIR
+from shellgpt.utils.common import extract_code, prepare_prompt
+from shellgpt.utils.conf import DEFAULT_IMAGE_DIR
 from os import path
 import unittest
 

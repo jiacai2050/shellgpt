@@ -39,15 +39,15 @@ Repository = "https://github.com/jiacai2050/shellgpt"
 Issues = "https://github.com/jiacai2050/shellgpt/issues"
 
 [project.scripts]
-sg = "shgpt:main"
-shellgpt = "shgpt:main"
+sg = "shellgpt:main"
+shellgpt = "shellgpt:main"
 
 [tool.hatch.version]
-path = "shgpt/version.py"
+path = "shellgpt/app.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "shgpt",
+  "shellgpt",
   "tests",
   "pyproject.toml",
   "README.md",
@@ -56,7 +56,7 @@ include = [
 
 [tool.hatch.build.targets.wheel]
 include = [
-  "shgpt",
+  "shellgpt",
 ]
 
 # https://github.com/astral-sh/ruff?tab=readme-ov-file#configuration

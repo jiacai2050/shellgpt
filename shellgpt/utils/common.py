@@ -8,7 +8,7 @@ import subprocess
 import sys
 import pyperclip
 
-from shgpt.utils.conf import DEFAULT_IMAGE_DIR, IS_TTY
+from shellgpt.utils.conf import DEFAULT_IMAGE_DIR, IS_TTY
 
 IS_VERBOSE = False
 

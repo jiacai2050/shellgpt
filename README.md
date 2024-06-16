@@ -44,7 +44,7 @@ export SHELLGPT_API_KEY=<token>
 export SHELLGPT_MODEL='@cf/meta/llama-3-8b-instruct'
 ```
 
-See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.py) for more configs.
+See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shellgpt/utils/conf.py) for more configs.
 
 ## TUI
 

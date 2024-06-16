@@ -2,7 +2,6 @@ import argparse
 import sys
 from os import makedirs
 from .api.ollama import Ollama
-from .version import __version__
 from .utils.conf import (
     API_KEY,
     MAX_CHAT_MESSAGES,
@@ -26,6 +25,8 @@ from .utils.common import (
 )
 from .tui.app import ShellGPTApp
 from .history import History
+
+__version__ = '0.5.0'
 
 
 def init_app():
@@ -143,7 +144,7 @@ def load_system_content_when_necessary(sc):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog='shgpt',
+        prog='sg',
         description='Chat with LLM in your terminal, be it shell generator, story teller, linux-terminal, etc.',
     )
 
