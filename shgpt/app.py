@@ -34,9 +34,13 @@ def init_app():
 
 
 class ShellGPT(object):
-    def __init__(self, url, key, model, system_content, temperature, timeout, max_messages):
+    def __init__(
+        self, url, key, model, system_content, temperature, timeout, max_messages
+    ):
         self.is_shell = system_content == 'shell'
-        self.llm = Ollama(url, key, model, system_content, temperature, timeout, max_messages)
+        self.llm = Ollama(
+            url, key, model, system_content, temperature, timeout, max_messages
+        )
 
     def tui(self, history, initial_prompt):
         app = ShellGPTApp(self.llm, history, initial_prompt)
@@ -58,7 +62,12 @@ class ShellGPT(object):
             self.llm.model = args[2]
             return True
         elif sub_cmd == 'system':
-            self.llm.system_content = args[2]
+            sc = args[2]
+            if load_system_content_when_necessary(sc):
+                self.llm.system_content = sc
+            else:
+                print(f'No such system content "{sc}"')
+
             return True
 
         return False
@@ -118,6 +127,18 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
                 copy_text(cmd)
             else:
                 self.infer(action)
+
+
+def load_system_content_when_necessary(sc):
+    if sc in SYSTEM_CONTENT:
+        return True
+
+    try:
+        load_contents_from_config()
+    except Exception as e:
+        debug_print(f'Error when load contents: ${e}')
+
+    return sc in SYSTEM_CONTENT
 
 
 def main():
@@ -202,13 +223,7 @@ def main():
     if args.shell or app_mode == AppMode.TUI:
         system_content = 'shell'
 
-    if system_content not in SYSTEM_CONTENT:
-        try:
-            load_contents_from_config()
-        except Exception as e:
-            debug_print(f'Error when load contents: ${e}')
-
-    if system_content not in SYSTEM_CONTENT:
+    if load_system_content_when_necessary(system_content) is False:
         print(f"Error: system_content '{system_content}' not found in config!")
         sys.exit(1)
 

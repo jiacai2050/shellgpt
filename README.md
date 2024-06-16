@@ -34,7 +34,7 @@ By default, `shellgpt` uses [Ollama](https://ollama.com/) as its language model 
 Alternatively, one can set up `shellgpt` to utilize [OpenAI compatible](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/) API endpoints:
 
 ```bash
-export SHELLGPT_API_URL=https://api.openai.com/
+export SHELLGPT_API_URL=https://api.openai.com
 export SHELLGPT_API_KEY=<token>
 export SHELLGPT_MODEL='gpt-3.5-turbo'
 
