@@ -7,18 +7,31 @@
 Chat with LLM in your terminal, be it shell generator, story teller, linux-terminal, etc.
 
 # Install
-```
+```bash
 pip install -U shgpt
 ```
 
-This will install two commands: `sg` and `shgpt`, which are identical.
+Or install latest version
+```bash
+pip install --force-reinstall -U git+https://github.com/jiacai2050/shellgpt.git
+```
+
+This will install two commands: `sg` and `shellgpt`, which are identical.
 
 After install, use `sg --init` to create required directories(mainly `~/.shellgpt`).
 
 # Usage
 
-## Basic
-By default, `shellgpt` uses [Ollama](https://ollama.com/) as its language model backend, requiring installation prior to usage. Alternatively, one can set up `shellgpt` to utilize [OpenAI compatible](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/) API endpoints:
+ShellGPT has three modes to use:
+- Direct mode, `sg [question]` or pipeline like `echo question | sg`.
+- REPL mode, `sg -l`, chat with LLM.
+- TUI mode, `sg -t`, tailored for infer shell command.
+
+## Model
+
+By default, `shellgpt` uses [Ollama](https://ollama.com/) as its language model backend, requiring installation prior to usage.
+
+Alternatively, one can set up `shellgpt` to utilize [OpenAI compatible](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/) API endpoints:
 
 ```bash
 export SHELLGPT_API_URL=https://api.openai.com/
@@ -31,12 +44,7 @@ export SHELLGPT_API_KEY=<token>
 export SHELLGPT_MODEL='@cf/meta/llama-3-8b-instruct'
 ```
 
-ShellGPT has three modes to use:
-- Direct mode, `sg [question]` or pipeline like `echo question | sg`.
-- TUI mode, `sg`, tailored for infer shell command.
-- REPL mode, `sg -l`, chat with LLM.
-
-See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.py) for detailed configs.
+See [conf.py](https://github.com/jiacai2050/shellgpt/blob/main/shgpt/utils/conf.py) for more configs.
 
 ## TUI
 
@@ -49,12 +57,13 @@ There are 3 key bindings to use in TUI:
 
 ## Role
 
-There are 4 built-in [system role contents](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in shellgpt:
+There are some built-in [system role contents](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in shellgpt:
 - `default`, used for ask general questions
+- `typo`, used for correct article typos.
+- `slug`, used for generate URL slug.
 - `code`, used for ask programming questions
 - `shell`, used for infer shell command
-- `typo`, used for correct article typos.
-- `cm`, used for generate git commit message, like `git diff | sg -r cm`
+- `commit`, used for generate git commit message, like `git diff | sg -r commit`
 
 Users can define their own content in `~/.shellgpt/roles.json`, it a JSON map with
 - key being role name and
@@ -63,10 +72,10 @@ Users can define their own content in `~/.shellgpt/roles.json`, it a JSON map wi
 Or you can just copy [roles.json](https://github.com/jiacai2050/shellgpt/blob/main/roles.json) to play with, it's generated from [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts/blob/main/prompts.csv).
 
 ```bash
-$ shgpt -r linux-terminal pwd
+$ sg -r linux-terminal pwd
 /home/user
 
-$ shgpt -r javascript-console 0.1 + 0.2
+$ sg -r javascript-console 0.1 + 0.2
 0.3
 
 ```

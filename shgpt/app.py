@@ -36,11 +36,10 @@ def init_app():
 class ShellGPT(object):
     def __init__(self, url, key, model, role, temperature, timeout, max_messages):
         self.is_shell = role == 'shell'
-        self.model = model
-        self.llm = Ollama(url, key, role, temperature, timeout, max_messages)
+        self.llm = Ollama(url, key, model, role, temperature, timeout, max_messages)
 
     def tui(self, history, initial_prompt):
-        app = ShellGPTApp(self.model, self.llm, history, initial_prompt)
+        app = ShellGPTApp(self.llm, history, initial_prompt)
         app.run()
 
     # return true when prompt is a set command
@@ -56,7 +55,7 @@ class ShellGPT(object):
 
         sub_cmd = args[1]
         if sub_cmd == 'model':
-            self.model = args[2]
+            self.llm.model = args[2]
             return True
 
         return False
@@ -70,7 +69,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 """)
         self.infer(initial_prompt)
         while True:
-            prompt = input(f'{self.model}> ')
+            prompt = input(f'{self.llm.model}> ')
             if self.repl_action(prompt):
                 continue
 
@@ -82,7 +81,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 
         buf = ''
         try:
-            for r in self.llm.chat(self.model, prompt):
+            for r in self.llm.chat(prompt):
                 buf += r
                 if self.is_shell is False:
                     print(r, end='', flush=True)
@@ -106,7 +105,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
             action = action.upper()
             if action == 'E':
                 for r in self.llm.chat(
-                    self.model, f'Explain this command: {cmd}', add_system_message=False
+                    f'Explain this command: {cmd}', add_system_message=False
                 ):
                     print(r, end='', flush=True)
                 print()

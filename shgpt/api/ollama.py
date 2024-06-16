@@ -7,7 +7,7 @@ from ..utils.conf import IMAGE_MODEL, ROLE_CONTENT
 
 # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
 class Ollama(object):
-    def __init__(self, base_url, key, role, temperature, timeout, max_messages):
+    def __init__(self, base_url, key, model, role, temperature, timeout, max_messages):
         session = TimeoutSession(timeout=timeout)
         if key is not None and key != '':
             session.headers = {'Authorization': f'Bearer {key}'}
@@ -15,6 +15,7 @@ class Ollama(object):
         else:
             self.use_openai = False
         self.base_url = base_url
+        self.model = model
         self.http_session = session
         self.role = role
         self.temperature = temperature
@@ -26,14 +27,15 @@ class Ollama(object):
         )
         self.messages = []
 
-    def chat(self, model, prompt, stream=True, add_system_message=True):
+    def chat(self, prompt, stream=True, add_system_message=True):
         return (
-            self.chat_openai(model, prompt, stream, add_system_message)
+            self.chat_openai(prompt, stream, add_system_message)
             if self.use_openai
-            else self.chat_ollama(model, prompt, stream, add_system_message)
+            else self.chat_ollama(prompt, stream, add_system_message)
         )
 
-    def chat_openai(self, model, prompt, stream, add_system_message):
+    def chat_openai(self, prompt, stream, add_system_message):
+        model = self.model
         url = f'{self.base_url}/v1/chat/completions'
         debug_print(
             f'chat: {prompt} to {url} with model {model} role {self.role} and stream {stream}'
@@ -107,7 +109,8 @@ class Ollama(object):
 
         return msgs, model
 
-    def chat_ollama(self, model, prompt, stream, add_system_message):
+    def chat_ollama(self, prompt, stream, add_system_message):
+        model = self.model
         url = self.base_url + '/api/chat'
         debug_print(
             f'chat: {prompt} to {url} with model {model} role {self.role} and stream {stream}'

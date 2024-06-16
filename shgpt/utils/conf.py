@@ -46,13 +46,11 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
     Output the best matching shell commands without any other information, or any quotes.
     Make sure it's valid shell command.
     """.format(os_name=OS_NAME, shell=SHELL),
-    # commit message
-    'cm': """
-    Generate git commit message for this changes.
-    """,
-    'typo': '''
+    'commit': "You are now a git commit message writer. I'll give you a list of changes, and you'll reply with a commit message that summarizes these changes in a clear and concise way, keeping the original formatting.",
+    'typo': """
     You are now an article correction assistant. You need to find out the input text in the spelling errors, incoherent places, can only return the corrected text, without any explanation. The output keeps the original format and language output, don't modify the style, and keey the code blocks unchanged.
-    '''
+    """,
+    'slug': 'You are now a slug generator. I will give you some sentences, and you will reply with a slug version of those sentences. A slug is a URL-friendly version of a title, where spaces are replaced with hyphens, and all characters are lowercased. Do not include any special characters, and keep the output in English.',
 }
 
 
