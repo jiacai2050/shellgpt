@@ -52,7 +52,6 @@ include = [
   "pyproject.toml",
   "README.md",
   "Makefile",
-  "roles.json",
 ]
 
 [tool.hatch.build.targets.wheel]

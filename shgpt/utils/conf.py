@@ -30,8 +30,8 @@ def get_shell_type():
 SHELL = get_shell_type()
 
 
-# Built-in system role content for different user cases.
-ROLE_CONTENT = {
+# Built-in system content for different user cases.
+SYSTEM_CONTENT = {
     'default': None,
     'code': """
 Provide only code as output without any description.
@@ -54,9 +54,9 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
 }
 
 
-def load_roles_from_config():
-    conf_file = path.join(CONF_PATH, 'roles.json')
+def load_contents_from_config():
+    conf_file = path.join(CONF_PATH, 'contents.json')
     with open(conf_file) as r:
-        roles = json.loads(r.read())
-        global ROLE_CONTENT
-        ROLE_CONTENT.update(roles)
+        contents = json.loads(r.read())
+        global SYSTEM_CONTENT
+        SYSTEM_CONTENT.update(contents)

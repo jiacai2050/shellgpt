@@ -2,12 +2,16 @@ import json
 
 from ..utils.http import TimeoutSession
 from ..utils.common import base64_image, debug_print, prepare_prompt
-from ..utils.conf import IMAGE_MODEL, ROLE_CONTENT
+from ..utils.conf import IMAGE_MODEL, SYSTEM_CONTENT
+
+
+def get_system_content(sc):
+    return None if sc == 'default' else SYSTEM_CONTENT.get(sc)
 
 
 # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
 class Ollama(object):
-    def __init__(self, base_url, key, model, role, temperature, timeout, max_messages):
+    def __init__(self, base_url, key, model, system_content, temperature, timeout, max_messages):
         session = TimeoutSession(timeout=timeout)
         if key is not None and key != '':
             session.headers = {'Authorization': f'Bearer {key}'}
@@ -17,14 +21,9 @@ class Ollama(object):
         self.base_url = base_url
         self.model = model
         self.http_session = session
-        self.role = role
+        self.system_content = system_content
         self.temperature = temperature
         self.max_messages = max_messages
-        self.system_message = (
-            None
-            if role == 'default'
-            else {'role': 'system', 'content': ROLE_CONTENT.get(self.role)}
-        )
         self.messages = []
 
     def chat(self, prompt, stream=True, add_system_message=True):
@@ -38,7 +37,7 @@ class Ollama(object):
         model = self.model
         url = f'{self.base_url}/v1/chat/completions'
         debug_print(
-            f'chat: {prompt} to {url} with model {model} role {self.role} and stream {stream}'
+            f'chat: {prompt} to {url} with model {model} system_content {self.system_content} and stream {stream}'
         )
         messages, model = self.make_messages(
             model,
@@ -103,7 +102,9 @@ class Ollama(object):
         if len(self.messages) > self.max_messages:
             self.messages = self.messages[-self.max_messages :]
 
-        msgs = [] if self.system_message is None else [self.system_message]
+        msgs = [] if self.system_content is None else [{
+            'role': 'system', 'content': get_system_content(self.system_content)
+        }]
         for m in self.messages:
             msgs.append(m)
 
@@ -113,7 +114,7 @@ class Ollama(object):
         model = self.model
         url = self.base_url + '/api/chat'
         debug_print(
-            f'chat: {prompt} to {url} with model {model} role {self.role} and stream {stream}'
+            f'chat: {prompt} to {url} with model {model} system_content {self.system_content} and stream {stream}'
         )
 
         messages, model = self.make_messages(model, prompt, True, add_system_message)

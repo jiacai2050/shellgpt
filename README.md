@@ -55,9 +55,9 @@ There are 3 key bindings to use in TUI:
 
 ![TUI screenshot](https://github.com/jiacai2050/shellgpt/raw/main/assets/shellgpt-tui.jpg)
 
-## Role
+## System contents
 
-There are some built-in [system role contents](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in shellgpt:
+There are some built-in [system contents](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in shellgpt:
 - `default`, used for ask general questions
 - `typo`, used for correct article typos.
 - `slug`, used for generate URL slug.
@@ -65,11 +65,11 @@ There are some built-in [system role contents](https://platform.openai.com/docs/
 - `shell`, used for infer shell command
 - `commit`, used for generate git commit message, like `git diff | sg -r commit`
 
-Users can define their own content in `~/.shellgpt/roles.json`, it a JSON map with
-- key being role name and
-- value being role content
+Users can define their own content in `~/.shellgpt/contents.json`, it a JSON map with
+- key being content name and
+- value being content body
 
-Or you can just copy [roles.json](https://github.com/jiacai2050/shellgpt/blob/main/roles.json) to play with, it's generated from [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts/blob/main/prompts.csv).
+Or you can just copy [contents.json](https://github.com/jiacai2050/shellgpt/blob/main/contents.json) to play with, it's generated from [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts/blob/main/prompts.csv).
 
 ```bash
 $ sg -r linux-terminal pwd
@@ -80,7 +80,7 @@ $ sg -r javascript-console 0.1 + 0.2
 
 ```
 
-Users can share their customized roles in [discuss section](https://github.com/jiacai2050/shellgpt/discussions).
+Users can share their customized contents in [discuss section](https://github.com/jiacai2050/shellgpt/discussions).
 
 # License
 

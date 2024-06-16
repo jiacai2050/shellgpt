@@ -24,7 +24,7 @@ shell:
 ut:
 	hatch run python -m unittest -v
 
-roles:
-	@ python download-roles.py
+contents:
+	@ python download-contents.py
 
-.PHONY: tui repl build clean fix lint shell roles
+.PHONY: tui repl build clean fix lint shell contents

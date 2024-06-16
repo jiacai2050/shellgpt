@@ -7,11 +7,11 @@ from .utils.conf import (
     API_KEY,
     MAX_CHAT_MESSAGES,
     MODEL,
-    load_roles_from_config,
+    load_contents_from_config,
     INFER_TIMEOUT,
     API_URL,
     TEMPERATURE,
-    ROLE_CONTENT,
+    SYSTEM_CONTENT,
     CONF_PATH,
     IS_TTY,
 )
@@ -34,9 +34,9 @@ def init_app():
 
 
 class ShellGPT(object):
-    def __init__(self, url, key, model, role, temperature, timeout, max_messages):
-        self.is_shell = role == 'shell'
-        self.llm = Ollama(url, key, model, role, temperature, timeout, max_messages)
+    def __init__(self, url, key, model, system_content, temperature, timeout, max_messages):
+        self.is_shell = system_content == 'shell'
+        self.llm = Ollama(url, key, model, system_content, temperature, timeout, max_messages)
 
     def tui(self, history, initial_prompt):
         app = ShellGPTApp(self.llm, history, initial_prompt)
@@ -57,6 +57,9 @@ class ShellGPT(object):
         if sub_cmd == 'model':
             self.llm.model = args[2]
             return True
+        elif sub_cmd == 'system':
+            self.llm.system_content = args[2]
+            return True
 
         return False
 
@@ -69,7 +72,7 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
 """)
         self.infer(initial_prompt)
         while True:
-            prompt = input(f'{self.llm.model}> ')
+            prompt = input(f'{self.llm.system_content}@{self.llm.model}> ')
             if self.repl_action(prompt):
                 continue
 
@@ -130,19 +133,13 @@ def main():
         '-s',
         '--shell',
         action='store_true',
-        help='System role set to `shell`',
+        help='System content set to `shell`',
     )
     parser.add_argument(
         '-c',
-        '--code',
-        action='store_true',
-        help='System role set to `code`',
-    )
-    parser.add_argument(
-        '-r',
-        '--role',
+        '--system-content',
         default='default',
-        help='System role to use, (default: %(default)s)',
+        help='System content to use, (default: %(default)s)',
     )
     parser.add_argument(
         '-l', '--repl', action='store_true', help='Start interactive REPL'
@@ -201,27 +198,25 @@ def main():
     else:
         app_mode = AppMode.REPL if len(prompt) == 0 else AppMode.Direct
 
-    role = args.role
+    system_content = args.system_content
     if args.shell or app_mode == AppMode.TUI:
-        role = 'shell'
-    elif args.code:
-        role = 'code'
+        system_content = 'shell'
 
-    if role not in ROLE_CONTENT:
+    if system_content not in SYSTEM_CONTENT:
         try:
-            load_roles_from_config()
+            load_contents_from_config()
         except Exception as e:
-            debug_print(f'Error when load roles: ${e}')
+            debug_print(f'Error when load contents: ${e}')
 
-    if role not in ROLE_CONTENT:
-        print(f"Error: role '{role}' not found in config!")
+    if system_content not in SYSTEM_CONTENT:
+        print(f"Error: system_content '{system_content}' not found in config!")
         sys.exit(1)
 
     sg = ShellGPT(
         args.api_url,
         args.api_key,
         args.model,
-        role,
+        system_content,
         args.temperature,
         args.timeout,
         args.max_messages,
