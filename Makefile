@@ -1,14 +1,14 @@
 tui:
-	@ python -m shellgpt -t
+	python -m shellgpt -t $(args)
 
 repl:
-	@ python -m shellgpt -l
+	python -m shellgpt -r $(args)
 
 build: clean
 	hatch build
 
 clean:
-	rm -rf build dist shellgpt.egg-info
+	rm -rf build dist
 
 fix:
 	ruff check --fix

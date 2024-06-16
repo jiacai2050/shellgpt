@@ -107,8 +107,7 @@ class ShellGPTApp(App):
 
         debug_print(f'infer {prompt}')
         self.history.add(prompt)
-        # llm infer
-        resp = self.llm.chat(self.model, prompt)
+        resp = self.llm.chat(prompt)
         buf = ''
         for item in resp:
             buf += item
