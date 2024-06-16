@@ -57,8 +57,9 @@ def copy_text(text):
     pyperclip.copy(text)
 
 
-def execute_cmd(cmd):
-    return subprocess.getoutput(cmd)
+def execute_cmd(cmd, ask=False):
+    if 'y' == input(f'Type y to run: `{cmd}`> '):
+        return subprocess.getoutput(cmd)
 
 
 def base64_image(image_path: str) -> str:

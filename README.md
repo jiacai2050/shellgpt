@@ -24,7 +24,7 @@ After install, use `sg --init` to create required directories(mainly `~/.shellgp
 
 ShellGPT has three modes to use:
 - Direct mode, `sg [question]` or pipeline like `echo question | sg`.
-- REPL mode, `sg -l`, chat with LLM.
+- REPL mode, `sg -r`, chat with LLM.
 - TUI mode, `sg -t`, tailored for infer shell command.
 
 ## Model

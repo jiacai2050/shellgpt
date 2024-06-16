@@ -57,10 +57,17 @@ class ShellGPT(object):
     def repl_action(self, prompt):
         if 'exit' == prompt:
             sys.exit(0)
-
-        if prompt.upper() == 'C':
+        elif prompt == 'c':
             copy_text(self.last_answer)
             return True
+
+        if self.is_shell:
+            if prompt == 'e':
+                self.explain_cmd(self.last_answer)
+                return True
+            elif prompt == 'r':
+                print(execute_cmd(self.last_answer, ask=True))
+                return True
 
         # Following parse set command
         if prompt.startswith('set') is False:
@@ -87,14 +94,18 @@ class ShellGPT(object):
         return False
 
     def repl(self, initial_prompt):
-        print(r"""
+        print(
+            r"""
 __      __   _                    _         ___ _        _ _  ___ ___ _____
 \ \    / /__| |__ ___ _ __  ___  | |_ ___  / __| |_  ___| | |/ __| _ \_   _|
  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
 
-Type "exit" to exit; "c" to copy last answer
-""")
+Type "exit" to exit; "c" to copy last answer.
+When system is shell , type "e" to explain, "r" to run last command.
+""",
+            end='',
+        )
         self.infer(initial_prompt)
         while True:
             prompt = input(f'{self.llm.system_content}@{self.llm.model}> ')
@@ -123,30 +134,18 @@ Type "exit" to exit; "c" to copy last answer
                 print()
 
             self.last_answer = buf
-            if self.is_shell:
-                self.shell_action(buf)
         except Exception as e:
             print(f'Error when infer: ${e}')
 
-    def shell_action(self, cmd):
-        if IS_TTY:
-            action = input('(R)un, (C)opy, (E)xplain> ')
-            action = action.upper()
-            buf = ''
-            if action == 'E':
-                for r in self.llm.chat(
-                    f'Explain this command: {cmd}', add_system_message=False
-                ):
-                    buf += r
-                    print(r, end='', flush=True)
-                print()
-                self.last_answer = buf
-            elif action == 'R':
-                print(execute_cmd(cmd))
-            elif action == 'C':
-                copy_text(cmd)
-            else:
-                self.infer(action)
+    def explain_cmd(self, cmd):
+        buf = ''
+        for r in self.llm.chat(
+            f'Explain this command: {cmd}', add_system_message=False
+        ):
+            buf += r
+            print(r, end='', flush=True)
+        print()
+        self.last_answer = buf
 
 
 def load_system_content_when_necessary(sc):
