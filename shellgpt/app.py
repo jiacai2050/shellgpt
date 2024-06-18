@@ -25,7 +25,7 @@ from .utils.common import (
 from .tui.app import ShellGPTApp
 from .history import History
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 
 def init_app():
