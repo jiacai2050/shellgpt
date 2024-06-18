@@ -23,5 +23,11 @@ class History:
     def add(self, line):
         readline.add_history(line)
 
+    def len(self):
+        return readline.get_current_history_length()
+
+    def remove_last(self):
+        return readline.remove_history_item(self.len() - 1)
+
     def __del__(self):
         self.save()

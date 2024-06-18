@@ -41,10 +41,20 @@ def list_content():
 
 class ShellGPT(object):
     def __init__(
-        self, url, key, model, system_content, temperature, timeout, max_messages
+        self,
+        url,
+        key,
+        model,
+        system_content,
+        temperature,
+        timeout,
+        max_messages,
+        history,
     ):
         self.is_shell = system_content == 'shell'
         self.last_answer = None
+        self.history = history
+        self.num_prompt = 0
         self.llm = LLM(
             url, key, model, system_content, temperature, timeout, max_messages
         )
@@ -56,7 +66,8 @@ class ShellGPT(object):
     # return true when prompt is a set command
     def repl_action(self, prompt):
         if 'exit' == prompt:
-            sys.exit(0)
+            self.history.remove_last()
+            raise EOFError
         elif prompt == 'c':
             copy_text(self.last_answer)
             return True
@@ -101,51 +112,60 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
 
-Type "exit" to exit; "c" to copy last answer.
-When system is shell , type "e" to explain, "r" to run last command.
+Type "exit" or ctrl-d to exit; ctrl-c to stop response; "c" to copy last answer.
+When system content is shell , type "e" to explain, "r" to run last command.
 """,
             end='',
         )
-        self.infer(initial_prompt)
-        while True:
-            prompt = input(f'{self.llm.system_content}@{self.llm.model}> ')
-            if IS_TTY and self.repl_action(prompt):
-                continue
+        try:
+            self.repl_inner(initial_prompt)
+        except EOFError:
+            print(f'\n{self.num_prompt} questions asked this time, bye...')
+            sys.exit(0)
 
-            self.infer(prompt)
+    def repl_inner(self, initial_prompt):
+        while True:
+            try:
+                self.infer(initial_prompt)
+                prompt = input(f'{self.llm.system_content}@{self.llm.model}> ')
+                if IS_TTY and self.repl_action(prompt):
+                    self.history.remove_last()
+                    continue
+
+                self.infer(prompt)
+            except KeyboardInterrupt:
+                print()
 
     def infer(self, prompt):
         if prompt == '':
             return
 
-        buf = ''
+        self.num_prompt += 1
+        self.last_answer = ''
         try:
             for r in self.llm.chat(prompt):
-                buf += r
+                self.last_answer += r
                 if self.is_shell is False:
                     print(r, end='', flush=True)
 
             if self.is_shell:
-                shell = extract_code(buf)
+                shell = extract_code(self.last_answer)
                 if shell is not None:
-                    buf = shell
-                print(buf)
+                    self.last_answer = shell
+                print(self.last_answer)
             else:
                 print()
-
-            self.last_answer = buf
         except Exception as e:
             print(f'Error when infer: ${e}')
 
     def explain_cmd(self, cmd):
-        buf = ''
+        self.last_answer = ''
         for r in self.llm.chat(
             f'Explain this command: {cmd}', add_system_message=False
         ):
-            buf += r
+            self.last_answer += r
             print(r, end='', flush=True)
         print()
-        self.last_answer = buf
 
 
 def load_system_content_when_necessary(sc):
@@ -248,6 +268,7 @@ def main():
         print(f"Error: system_content '{system_content}' not found in config!")
         sys.exit(1)
 
+    history = History()
     sg = ShellGPT(
         args.api_url,
         args.api_key,
@@ -256,8 +277,8 @@ def main():
         args.temperature,
         args.timeout,
         args.max_messages,
+        history,
     )
-    history = History()
     if prompt != '':
         history.add(prompt)
 
