@@ -63,6 +63,17 @@ class ShellGPT(object):
         app = ShellGPTApp(self.llm, history, initial_prompt)
         app.run()
 
+    def editor(self):
+        print('// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)')
+        prompt = ''
+        while True:
+            try:
+                prompt += input('')
+            except KeyboardInterrupt:  # Ctrl+C to cancel
+                return None
+            except EOFError:  # Ctrl+D to finish
+                return prompt
+
     # return true when prompt is a set command
     def repl_action(self, prompt):
         if 'exit' == prompt:
@@ -70,6 +81,11 @@ class ShellGPT(object):
             raise EOFError
         elif prompt == 'c':
             copy_text(self.last_answer)
+            return True
+        elif prompt == 'ed':  # enter editor mode
+            new_prompt = self.editor()
+            if new_prompt is not None:
+                self.infer(new_prompt)
             return True
 
         if self.is_shell:
@@ -112,11 +128,12 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
 
-Type "exit" or ctrl-d to exit; ctrl-c to stop response; "c" to copy last answer.
+Type "exit" or ctrl-d to exit; ctrl-c to stop response; "c" to copy last answer; "ed" to enter editor mode.
 When system content is shell , type "e" to explain, "r" to run last command.
 """,
             end='',
         )
+
         try:
             self.repl_inner(initial_prompt)
         except EOFError:
