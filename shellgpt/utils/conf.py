@@ -12,7 +12,7 @@ TEMPERATURE = float(environ.get('SHELLGPT_TEMPERATURE', '0.8'))
 DEFAULT_IMAGE_DIR = path.expanduser(environ.get('SHELLGPT_IMAGE_DIR', '~/Pictures'))
 INFER_TIMEOUT = int(environ.get('SHELLGPT_INFER_TIMEOUT', '15'))  # seconds
 MAX_HISTORY = int(environ.get('SHELLGPT_MAX_HISTORY', '1000'))
-MAX_CHAT_MESSAGES = int(environ.get('SHELLGPT_MAX_CHAT_MESSAGES', '3'))
+MAX_CHAT_MESSAGES = int(environ.get('SHELLGPT_MAX_CHAT_MESSAGES', '5'))
 
 # Auto determined configs
 OS_NAME = platform.system()

@@ -54,7 +54,10 @@ def read_stdin():
 
 
 def copy_text(text):
-    pyperclip.copy(text)
+    if text is None:
+        print('No text to copy!')
+    else:
+        pyperclip.copy(text)
 
 
 def execute_cmd(cmd, ask=False):

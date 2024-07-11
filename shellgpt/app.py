@@ -1,5 +1,6 @@
 import argparse
 import sys
+import readline
 from os import makedirs
 from .api.llm import LLM
 from .utils.conf import (
@@ -39,6 +40,30 @@ def list_content():
         print(n)
 
 
+# List of commands for autocompletion
+commands = ['exit', 'clear', 'editor', 'set', 'copy', 'explain', 'run']
+
+
+def completer(text, state):
+    options = [cmd for cmd in commands if cmd.startswith(text)]
+    if state < len(options):
+        return options[state]
+    else:
+        return None
+
+
+def repl_setup():
+    readline.set_completer(completer)
+    # Use Tab for completion
+    if sys.platform == 'darwin':
+        readline.parse_and_bind('bind ^I rl_complete')
+    else:
+        readline.parse_and_bind('tab: complete')
+
+    # Enable case-insensitive completion
+    readline.set_completer_delims(r' \t\n;')
+
+
 class ShellGPT(object):
     def __init__(
         self,
@@ -65,10 +90,13 @@ class ShellGPT(object):
 
     def editor(self):
         print('// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)')
-        prompt = ''
+        prompt = None
         while True:
             try:
-                prompt += input('')
+                if prompt is None:
+                    prompt = input('')
+                else:
+                    prompt += input('')
             except KeyboardInterrupt:  # Ctrl+C to cancel
                 return None
             except EOFError:  # Ctrl+D to finish
@@ -79,20 +107,24 @@ class ShellGPT(object):
         if 'exit' == prompt:
             self.history.remove_last()
             raise EOFError
-        elif prompt == 'c':
+        elif prompt in ['c', 'copy']:
             copy_text(self.last_answer)
             return True
-        elif prompt == 'ed':  # enter editor mode
+        elif prompt == 'clear':
+            self.llm.messages.clear()
+            copy_text(self.last_answer)
+            return True
+        elif prompt in ['ed', 'editor']:
             new_prompt = self.editor()
             if new_prompt is not None:
                 self.infer(new_prompt)
             return True
 
         if self.is_shell:
-            if prompt == 'e':
+            if prompt in ['e', 'explain']:
                 self.explain_cmd(self.last_answer)
                 return True
-            elif prompt == 'r':
+            elif prompt in ['r', 'run']:
                 print(execute_cmd(self.last_answer, ask=True))
                 return True
 
@@ -134,6 +166,7 @@ When system content is shell , type "e" to explain, "r" to run last command.
             end='',
         )
 
+        repl_setup()
         try:
             self.repl_inner(initial_prompt)
         except EOFError:
