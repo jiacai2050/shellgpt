@@ -57,32 +57,46 @@ class LLM(object):
 
         answer = ''
         current = b''
+        # https://github.com/openai/openai-python#streaming-responses
+        # The response is SSE, so we need to parse the response line by line.
         for item in r.iter_content(chunk_size=None):
-            debug_print(f'item: {item}')
+            debug_print(f'\nitem: {item}\ncurrent: {current}')
             for msg in item.split(b'\n\n'):
-                msg = msg.strip(b'data: ')
+                msg = msg.removeprefix(b'data: ')
                 if len(msg) == 0:
                     continue
 
                 current += msg
 
-                # when current end with '}', it's the end of the message
+                # when current end with '}', it maybe the end of the message
                 if current[-1] == 125:
-                    msg = current
+                    # msg is a complete JSON message
+                    # `data:` may appear in the middle of the message, so we need to remove it again.
+                    msg = current.removeprefix(b'data: ')
                     current = b''
                 else:
                     continue
 
                 s = msg.decode('utf-8')
+                debug_print(f'\nitem to decode: {s}')
                 if s == '[DONE]':
                     self.messages.append({'role': 'assistant', 'content': answer})
                     return
                 else:
-                    resp = json.loads(s)
-                    for item in resp['choices']:
-                        msg = item['delta']['content']
-                        answer += msg
-                        yield msg
+                    try:
+                        resp = json.loads(s)
+                        for item in resp['choices']:
+                            if 'content' not in item['delta']:
+                                continue
+
+                            msg = item['delta']['content']
+                            answer += msg
+                            yield msg
+                    except json.JSONDecodeError as e:
+                        debug_print(f'Error when decode JSON: {s}, err:{e}')
+                        # this means the message is not a JSON message, so we need to continue searching next }.
+                        current = msg
+                        continue
 
     def make_messages(self, prompt, support_image, add_system_message):
         model = self.model

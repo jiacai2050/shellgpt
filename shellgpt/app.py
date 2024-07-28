@@ -15,6 +15,7 @@ from .utils.conf import (
     IS_TTY,
 )
 from .utils.common import (
+    is_verbose,
     load_contents_from_config,
     execute_cmd,
     copy_text,
@@ -26,7 +27,7 @@ from .utils.common import (
 from .tui.app import ShellGPTApp
 from .history import History
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 
 def init_app():
@@ -207,6 +208,8 @@ When system content is shell , type "e" to explain, "r" to run last command.
                 print()
         except Exception as e:
             print(f'Error when infer: ${e}')
+            if is_verbose():
+                raise e
 
     def explain_cmd(self, cmd):
         self.last_answer = ''

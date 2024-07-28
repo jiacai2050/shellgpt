@@ -25,6 +25,10 @@ def set_verbose(v):
     IS_VERBOSE = v
 
 
+def is_verbose():
+    return IS_VERBOSE
+
+
 def debug_print(msg):
     if IS_VERBOSE:
         print(msg)
