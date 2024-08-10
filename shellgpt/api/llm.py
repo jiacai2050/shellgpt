@@ -37,13 +37,13 @@ class LLM(object):
 
     def chat_openai(self, prompt, stream, add_system_message):
         url = urljoin(self.base_url, '/v1/chat/completions')
-        debug_print(
-            f'chat: {prompt} to {url} with model {self.model} system_content {self.system_content} and stream {stream}'
-        )
         messages, model = self.make_messages(
             prompt,
             False,
             add_system_message,
+        )
+        debug_print(
+            f'chat: {prompt} to {url} with model {self.model} system_content {self.system_content} and stream {stream}, messages: \n{messages}'
         )
         payload = {
             'messages': messages,
@@ -60,7 +60,7 @@ class LLM(object):
         # https://github.com/openai/openai-python#streaming-responses
         # The response is SSE, so we need to parse the response line by line.
         for item in r.iter_content(chunk_size=None):
-            debug_print(f'\nitem: {item}\ncurrent: {current}')
+            # debug_print(f'\nitem: {item}\ncurrent: {current}')
             for msg in item.split(b'\n\n'):
                 msg = msg.removeprefix(b'data: ')
                 if len(msg) == 0:
@@ -78,7 +78,6 @@ class LLM(object):
                     continue
 
                 s = msg.decode('utf-8')
-                debug_print(f'\nitem to decode: {s}')
                 if s == '[DONE]':
                     self.messages.append({'role': 'assistant', 'content': answer})
                     return
@@ -92,8 +91,7 @@ class LLM(object):
                             msg = item['delta']['content']
                             answer += msg
                             yield msg
-                    except json.JSONDecodeError as e:
-                        debug_print(f'Error when decode JSON: {s}, err:{e}')
+                    except json.JSONDecodeError:
                         # this means the message is not a JSON message, so we need to continue searching next }.
                         current = msg
                         continue
@@ -130,11 +128,11 @@ class LLM(object):
     def chat_ollama(self, prompt, stream, add_system_message):
         model = self.model
         url = urljoin(self.base_url, '/api/chat')
+        messages, model = self.make_messages(prompt, True, add_system_message)
         debug_print(
-            f'chat: {prompt} to {url} with model {model} system_content {self.system_content} and stream {stream}'
+            f'chat: {prompt} to {url} with model {self.model} system_content {self.system_content} and stream {stream}, messages: \n{messages}'
         )
 
-        messages, model = self.make_messages(prompt, True, add_system_message)
         payload = {
             'messages': messages,
             'model': model,
@@ -142,7 +140,6 @@ class LLM(object):
             'options': {'temperature': self.temperature},
         }
 
-        debug_print(f'Infer message: {payload}')
         r = self.http_session.post(url, json=payload, stream=stream)
         if r.status_code != 200:
             raise Exception('Error: ' + r.text)

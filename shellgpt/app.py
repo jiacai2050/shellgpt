@@ -42,7 +42,7 @@ def list_content():
 
 
 # List of commands for autocompletion
-commands = ['exit', 'clear', 'editor', 'set', 'copy', 'explain', 'run']
+commands = ['exit', 'clear', 'editor', 'set', 'copy', 'explain', 'run', 'clear']
 
 
 def completer(text, state):
@@ -120,6 +120,9 @@ class ShellGPT(object):
             if new_prompt is not None:
                 self.infer(new_prompt)
             return True
+        elif prompt in ['clear']:
+            self.llm.messages = []
+            return True
 
         if self.is_shell:
             if prompt in ['e', 'explain']:
@@ -139,6 +142,9 @@ class ShellGPT(object):
 
         sub_cmd = args[1]
         if sub_cmd == 'model':
+            self.llm.model = args[2]
+            return True
+        elif sub_cmd == 'history':
             self.llm.model = args[2]
             return True
         elif sub_cmd == 'system':
@@ -161,7 +167,8 @@ __      __   _                    _         ___ _        _ _  ___ ___ _____
  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ \__ \ ' \/ -_) | | (_ |  _/ | |
   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ |___/_||_\___|_|_|\___|_|   |_|
 
-Type "exit" or ctrl-d to exit; ctrl-c to stop response; "c" to copy last answer; "ed" to enter editor mode.
+Type "exit" or ctrl-d to exit; ctrl-c to stop response; "c" to copy last answer;
+     "clear" to reset history messages; "ed" to enter editor mode.
 When system content is shell , type "e" to explain, "r" to run last command.
 """,
             end='',
@@ -240,14 +247,14 @@ def main():
     )
     parser.add_argument('-t', '--tui', action='store_true', help='enter TUI mode')
     parser.add_argument(
-        '-s',
+        '-S',
         '--shell',
         action='store_true',
         help='system content set to `shell`',
     )
     parser.add_argument(
-        '-c',
-        '--content',
+        '-s',
+        '--system',
         default='default',
         help='content for system role (default: %(default)s)',
     )
@@ -313,7 +320,7 @@ def main():
     else:
         app_mode = AppMode.REPL if len(prompt) == 0 else AppMode.Direct
 
-    system_content = args.content
+    system_content = args.system
     if args.shell or app_mode == AppMode.TUI:
         system_content = 'shell'
 
