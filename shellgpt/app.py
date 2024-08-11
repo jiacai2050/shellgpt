@@ -27,7 +27,7 @@ from .utils.common import (
 from .tui.app import ShellGPTApp
 from .history import History
 
-__version__ = '0.5.2'
+__version__ = '0.5.3'
 
 
 def init_app():
@@ -142,9 +142,6 @@ class ShellGPT(object):
 
         sub_cmd = args[1]
         if sub_cmd == 'model':
-            self.llm.model = args[2]
-            return True
-        elif sub_cmd == 'history':
             self.llm.model = args[2]
             return True
         elif sub_cmd == 'system':
