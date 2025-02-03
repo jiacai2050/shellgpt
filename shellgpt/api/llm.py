@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 
 
 def get_system_content(sc):
-    return None if sc == 'default' else SYSTEM_CONTENT.get(sc)
+    return SYSTEM_CONTENT.get(sc, sc)
 
 
 class LLM(object):

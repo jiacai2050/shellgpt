@@ -50,3 +50,15 @@ class TestLLM(unittest.TestCase):
                 {'content': 'hi', 'role': 'user'},
             ],
         )
+
+    def test_make_message_dynamic(self):
+        llm = LLM('url', 'key', 'llama3', 'dynamic system body', 0.8, 10, 2)
+
+        actual = llm.make_messages('hi', True, True)
+        self.assertEqual(
+            actual[0],
+            [
+                {'content': 'dynamic system body', 'role': 'system'},
+                {'content': 'hi', 'role': 'user'},
+            ],
+        )
