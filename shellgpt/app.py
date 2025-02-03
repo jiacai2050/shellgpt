@@ -148,7 +148,6 @@ class ShellGPT(object):
             sc = args[2]
             self.is_shell = sc == 'shell'
             self.llm.system_content = sc
-
             return True
 
         return False
