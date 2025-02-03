@@ -34,6 +34,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 
+[project.optional-dependencies]
+test = ["unittest"]
+
 [project.urls]
 Repository = "https://github.com/jiacai2050/shellgpt"
 Issues = "https://github.com/jiacai2050/shellgpt/issues"

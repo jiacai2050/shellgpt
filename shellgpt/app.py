@@ -27,7 +27,7 @@ from .utils.common import (
 from .tui.app import ShellGPTApp
 from .history import History
 
-__version__ = '0.5.3'
+__version__ = '0.5.4'
 
 
 def init_app():
@@ -225,13 +225,6 @@ When system content is shell , type "e" to explain, "r" to run last command.
         print()
 
 
-def load_system_content_when_necessary(sc):
-    if sc in SYSTEM_CONTENT:
-        return True
-
-    load_contents_from_config()
-    return sc in SYSTEM_CONTENT
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -321,9 +314,7 @@ def main():
     if args.shell or app_mode == AppMode.TUI:
         system_content = 'shell'
 
-    if load_system_content_when_necessary(system_content) is False:
-        print(f"Error: system_content '{system_content}' not found in config!")
-        sys.exit(1)
+    load_contents_from_config(False)
 
     history = History()
     sg = ShellGPT(
