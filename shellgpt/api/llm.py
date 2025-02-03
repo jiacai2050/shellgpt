@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 def get_system_content(sc):
     return SYSTEM_CONTENT.get(sc, sc)
 
+
 class LLM(object):
     def __init__(
         self, base_url, key, model, system_content, temperature, timeout, max_messages

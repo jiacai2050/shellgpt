@@ -147,10 +147,7 @@ class ShellGPT(object):
         elif sub_cmd == 'system':
             sc = args[2]
             self.is_shell = sc == 'shell'
-            if load_system_content_when_necessary(sc):
-                self.llm.system_content = sc
-            else:
-                print(f'No such system content "{sc}"')
+            self.llm.system_content = sc
 
             return True
 
@@ -223,7 +220,6 @@ When system content is shell , type "e" to explain, "r" to run last command.
             self.last_answer += r
             print(r, end='', flush=True)
         print()
-
 
 
 def main():
