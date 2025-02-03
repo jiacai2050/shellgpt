@@ -24,10 +24,9 @@ from .utils.common import (
     set_verbose,
     AppMode,
 )
-from .tui.app import ShellGPTApp
 from .history import History
 
-__version__ = '0.5.4'
+__version__ = '0.5.5-dev'
 
 
 def init_app():
@@ -86,8 +85,16 @@ class ShellGPT(object):
         )
 
     def tui(self, history, initial_prompt):
-        app = ShellGPTApp(self.llm, history, initial_prompt)
-        app.run()
+        try:
+            from .tui.app import ShellGPTApp
+
+            app = ShellGPTApp(self.llm, history, initial_prompt)
+            app.run()
+        except ImportError:
+            print(
+                'TUI dependencies are NOT installed. Please install them with: pip install shgpt[tui]'
+            )
+            sys.exit(1)
 
     def editor(self):
         print('// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)')

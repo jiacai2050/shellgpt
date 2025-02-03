@@ -74,7 +74,9 @@ class ShellGPTApp(App):
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
-        self.dark = not self.dark
+        self.theme = (
+            'textual-dark' if self.theme == 'textual-light' else 'textual-light'
+        )
 
     def action_infer(self) -> None:
         """An action to infer answer."""

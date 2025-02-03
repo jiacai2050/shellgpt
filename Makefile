@@ -27,4 +27,11 @@ ut:
 contents:
 	@ python download-contents.py
 
-.PHONY: tui repl build clean fix lint shell contents
+env:
+	python3 -m venv env
+
+dep:
+	pip install -e .
+	pip install -e "shellgpt.[tui]"
+
+.PHONY: tui repl build clean fix lint shell contents dep
