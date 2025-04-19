@@ -1,3 +1,8 @@
+#+begin_quote
+[!TIP]
+Repo Move to https://github.com/jiacai2050/my-works/tree/main/shellgpt
+#+end_quote
+
 # ShellGPT
 
 [![](https://img.shields.io/pypi/v/shgpt)](https://pypi.org/project/shgpt/)
