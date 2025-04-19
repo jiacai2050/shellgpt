@@ -1,7 +1,7 @@
-#+begin_quote
-[!TIP]
-Repo Move to https://github.com/jiacai2050/my-works/tree/main/shellgpt
-#+end_quote
+>
+> [!TIP]
+> Repo Move to https://github.com/jiacai2050/my-works/tree/main/shellgpt
+> 
 
 # ShellGPT
 
